@@ -1,0 +1,299 @@
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed, 
+figure, figcaption, footer, header, hgroup, 
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	font-size: 100%;
+	font: inherit;
+	vertical-align: baseline;
+}
+
+article, aside, details, figcaption, figure, 
+footer, header, hgroup, menu, nav, section {
+	display: block;
+}
+body {
+	line-height: 1;
+}
+ol, ul {
+	list-style: none;
+}
+blockquote, q {
+	quotes: none;
+}
+blockquote:before, blockquote:after,
+q:before, q:after {
+	content: '';
+	content: none;
+}
+table {
+	border-collapse: collapse;
+	border-spacing: 0;
+}
+.flex-box{
+    display: flex;
+    align-items: center;
+}
+@font-face{
+    font-family: Essendine;
+    src: url(../font/Essendine-Caps.ttf);
+}
+@font-face{
+    font-family: ImpactUTM;
+    src: url(../font/Impact.ttf);
+}
+
+img{
+    width: 100%;
+}
+
+.mySlides img{
+    width: 100%;
+    height: 400px;
+    object-fit: cover;
+}
+
+input{
+    width: 50% !important;
+}
+section{
+    min-height: 900px;
+}
+
+.bg-light{
+    background-color: var(--color-background-mode) !important;
+}
+
+body{
+    background-color: var(--color-background-mode);
+}
+
+.font-bold{
+    font-weight: bold !important;
+}
+
+.e-flex{
+    justify-content: flex-end;
+}
+
+.d-flex{
+    display: flex;
+}
+
+.btn-outline{
+    color: rgb(135, 11, 11) !important;
+}
+.logo{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.img-logo{
+    max-width: 50px;
+}
+.image-logo{
+    width: 100%;
+}
+.title-logo{
+    color: var(--color-word-mode);
+    font-family: Essendine;
+    font-size: 300%;
+    font-weight: 800;
+    letter-spacing: 5px;
+}
+.nav-main{
+    margin-bottom: 30px;
+}
+.title-company{
+    color: var(--color-word-mode);
+    font-family: Essendine;
+    font-size: 200%;
+    letter-spacing: 3px;
+    text-align: center;
+    margin-bottom: 30px;
+}
+.title-header{
+    color: var(--color-word-mode);
+    font-family: ImpactUTM;
+    font-size: 400%;
+    letter-spacing: 3px;
+    text-align: center;
+}
+section{
+    min-height: 900px;
+}
+.title-table-gold{
+    color: var(--color-word-mode);
+    font-family: ImpactUTM;
+}
+.head-main-table , .body-main-table{
+    width: 90%;
+}
+.head-tr{
+    width: 100%;
+    justify-content: center;
+}
+.table-main{
+    flex-direction: column;
+}
+.title-table-gold{
+    border: 1px solid var(--color-border-mode);
+    width: 33%;
+    min-height: 70px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 150%;
+}
+.title-table-small{
+    color: var(--color-word-mode);
+    font-family: ImpactUTM;
+    font-size: 120%;
+    border: 1px solid var(--color-border-mode);
+    width: 33%;
+    min-height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.body-main-table{
+    flex-direction: column;
+}
+.body-tr{
+    width: 100%;
+    justify-content: center;
+}
+.content-main-table{
+    font-family: ImpactUTM;
+    font-size: 180%;
+    border: 1px solid var(--color-border-mode);
+    width: 33%;
+    min-height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: red;
+}
+.slide-show-gold{
+    width: 90%;
+    margin-bottom: 5px;
+    flex-direction: column;
+
+}
+.slide-show{
+    flex-direction: column;
+}
+.mySlides{
+    width: 100%;
+    height: 400px;
+    object-fit: cover;
+
+}
+.mode-light{
+    color: var(--color-mode-icon);
+}
+.btn-mode-light{
+    background-color: unset;
+    border: unset;
+    top: 10px;
+    right: 20px;
+}
+#btn-light{
+    margin-left: 20px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+.btn-mode-light{
+    background-color: unset;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+.next-icon , .back-icon , .dot-icon{
+    color: var(--color-icon);
+    cursor: pointer;
+}
+.next-icon:active{
+    transform: translateX(10px);
+}
+.back-icon:active{
+    transform: translateX(-10px);
+}
+.dot-icon{
+    border: 1px solid var(--color-icon);
+    background: 0 0;
+    width: 12px;
+    height: 12px;
+    opacity: 1;
+    padding-left: 5px;
+    padding-right: 5px;
+    border-radius: 100%;
+    margin: 0 5px;
+}
+.dot-background-color{
+    background-color: var(--color-background-dot);
+    transform: translateY(-5px);
+}
+.dot-icon:hover {
+    background-color: var(--hover-color);
+}
+.next-icon:hover , .back-icon:hover {
+    color: var(--hover-color);
+}
+.dots-icon{
+    padding-left: 120px;
+    padding-right: 120px;
+}
+.row{
+    margin-right: 0px;
+}
+.div-slide{
+    width: 100%;
+}
+.time-date{
+    width: 90%;
+    margin-bottom: 20px;
+}
+.time , .date{
+    justify-content: center;
+}
+.time > h4 , .date > h4{
+    font-family: ImpactUTM;
+    color: var(--color-word-mode);
+    font-size: 170%;
+    margin-right: 10px;
+}
+.time > span , .date > span {
+    font-family: ImpactUTM;
+    color: red;
+    font-size: 200%;
+}
+
+:root {
+    --color-mode-icon: rgb(141, 78, 0);
+    --color-border-mode: black;
+    --color-word-mode: rgb(0, 5, 157);
+    --color-background-mode: #fff;
+    --color-icon: rgba(255, 255, 255);
+    --color-background-dot: rgb(0, 5, 157);
+    --hover-color: rgb(0, 5, 157);
+}
+[data-theme='dark']{
+    --color-mode-icon: black;
+    --color-border-mode: black;
+    --color-word-mode: green;
+    --color-background-mode: white;
+    --color-icon: rgba(0, 0, 0);
+    --color-background-dot: green;
+    --hover-color: green;
+}

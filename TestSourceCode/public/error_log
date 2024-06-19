@@ -1,0 +1,64 @@
+[28-Jul-2021 03:51:03 Europe/London] PHP Fatal error:  Uncaught ErrorException: Method ReflectionParameter::getClass() is deprecated in /home/postrangsuc/public_html/vendor/laravel/framework/src/Illuminate/Container/Container.php:853
+Stack trace:
+#0 /home/postrangsuc/public_html/vendor/laravel/framework/src/Illuminate/Container/Container.php(853): Illuminate\Foundation\Bootstrap\HandleExceptions->handleError()
+#1 /home/postrangsuc/public_html/vendor/laravel/framework/src/Illuminate/Container/Container.php(816): Illuminate\Container\Container->resolveDependencies()
+#2 /home/postrangsuc/public_html/vendor/laravel/framework/src/Illuminate/Container/Container.php(667): Illuminate\Container\Container->build()
+#3 /home/postrangsuc/public_html/vendor/laravel/framework/src/Illuminate/Container/Container.php(265): Illuminate\Container\Container->resolve()
+#4 /home/postrangsuc/public_html/vendor/laravel/framework/src/Illuminate/Container/Container.php(785): Illuminate\Container\Container->Illuminate\Container\{closure}()
+#5 /home/postrangsuc/public_html/vendor/laravel/framework/src/Illuminate/Container/Container.php(667): Illuminate\Container\Container->build()
+#6 /home/postrangsuc/public_html/vendor/laravel/framework/src/Illuminate/Container/Container.php(615): Illuminate\Container\Container->resolve()
+#7 /home/postrangsuc/public_html/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(767): Illuminate\Container\Container->make()
+#8 /home/postrangsuc/public_html/vendor/laravel/framework/src/Illuminate/Foundation/Bootstrap/HandleExceptions.php(170): Illuminate\Foundation\Application->make()
+#9 /home/postrangsuc/public_html/vendor/laravel/framework/src/Illuminate/Foundation/Bootstrap/HandleExceptions.php(123): Illuminate\Foundation\Bootstrap\HandleExceptions->getExceptionHandler()
+#10 /home/postrangsuc/public_html/vendor/laravel/framework/src/Illuminate/Foundation/Bootstrap/HandleExceptions.php(100): Illuminate\Foundation\Bootstrap\HandleExceptions->renderHttpResponse()
+#11 [internal function]: Illuminate\Foundation\Bootstrap\HandleExceptions->handleException()
+#12 {main}
+  thrown in /home/postrangsuc/public_html/vendor/laravel/framework/src/Illuminate/Container/Container.php on line 853
+[28-Jul-2021 03:51:06 Europe/London] PHP Fatal error:  Uncaught ErrorException: Method ReflectionParameter::getClass() is deprecated in /home/postrangsuc/public_html/vendor/laravel/framework/src/Illuminate/Container/Container.php:853
+Stack trace:
+#0 /home/postrangsuc/public_html/vendor/laravel/framework/src/Illuminate/Container/Container.php(853): Illuminate\Foundation\Bootstrap\HandleExceptions->handleError()
+#1 /home/postrangsuc/public_html/vendor/laravel/framework/src/Illuminate/Container/Container.php(816): Illuminate\Container\Container->resolveDependencies()
+#2 /home/postrangsuc/public_html/vendor/laravel/framework/src/Illuminate/Container/Container.php(667): Illuminate\Container\Container->build()
+#3 /home/postrangsuc/public_html/vendor/laravel/framework/src/Illuminate/Container/Container.php(265): Illuminate\Container\Container->resolve()
+#4 /home/postrangsuc/public_html/vendor/laravel/framework/src/Illuminate/Container/Container.php(785): Illuminate\Container\Container->Illuminate\Container\{closure}()
+#5 /home/postrangsuc/public_html/vendor/laravel/framework/src/Illuminate/Container/Container.php(667): Illuminate\Container\Container->build()
+#6 /home/postrangsuc/public_html/vendor/laravel/framework/src/Illuminate/Container/Container.php(615): Illuminate\Container\Container->resolve()
+#7 /home/postrangsuc/public_html/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(767): Illuminate\Container\Container->make()
+#8 /home/postrangsuc/public_html/vendor/laravel/framework/src/Illuminate/Foundation/Bootstrap/HandleExceptions.php(170): Illuminate\Foundation\Application->make()
+#9 /home/postrangsuc/public_html/vendor/laravel/framework/src/Illuminate/Foundation/Bootstrap/HandleExceptions.php(123): Illuminate\Foundation\Bootstrap\HandleExceptions->getExceptionHandler()
+#10 /home/postrangsuc/public_html/vendor/laravel/framework/src/Illuminate/Foundation/Bootstrap/HandleExceptions.php(100): Illuminate\Foundation\Bootstrap\HandleExceptions->renderHttpResponse()
+#11 [internal function]: Illuminate\Foundation\Bootstrap\HandleExceptions->handleException()
+#12 {main}
+  thrown in /home/postrangsuc/public_html/vendor/laravel/framework/src/Illuminate/Container/Container.php on line 853
+[28-Jul-2021 03:51:08 Europe/London] PHP Fatal error:  Uncaught ErrorException: Method ReflectionParameter::getClass() is deprecated in /home/postrangsuc/public_html/vendor/laravel/framework/src/Illuminate/Container/Container.php:853
+Stack trace:
+#0 /home/postrangsuc/public_html/vendor/laravel/framework/src/Illuminate/Container/Container.php(853): Illuminate\Foundation\Bootstrap\HandleExceptions->handleError()
+#1 /home/postrangsuc/public_html/vendor/laravel/framework/src/Illuminate/Container/Container.php(816): Illuminate\Container\Container->resolveDependencies()
+#2 /home/postrangsuc/public_html/vendor/laravel/framework/src/Illuminate/Container/Container.php(667): Illuminate\Container\Container->build()
+#3 /home/postrangsuc/public_html/vendor/laravel/framework/src/Illuminate/Container/Container.php(265): Illuminate\Container\Container->resolve()
+#4 /home/postrangsuc/public_html/vendor/laravel/framework/src/Illuminate/Container/Container.php(785): Illuminate\Container\Container->Illuminate\Container\{closure}()
+#5 /home/postrangsuc/public_html/vendor/laravel/framework/src/Illuminate/Container/Container.php(667): Illuminate\Container\Container->build()
+#6 /home/postrangsuc/public_html/vendor/laravel/framework/src/Illuminate/Container/Container.php(615): Illuminate\Container\Container->resolve()
+#7 /home/postrangsuc/public_html/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(767): Illuminate\Container\Container->make()
+#8 /home/postrangsuc/public_html/vendor/laravel/framework/src/Illuminate/Foundation/Bootstrap/HandleExceptions.php(170): Illuminate\Foundation\Application->make()
+#9 /home/postrangsuc/public_html/vendor/laravel/framework/src/Illuminate/Foundation/Bootstrap/HandleExceptions.php(123): Illuminate\Foundation\Bootstrap\HandleExceptions->getExceptionHandler()
+#10 /home/postrangsuc/public_html/vendor/laravel/framework/src/Illuminate/Foundation/Bootstrap/HandleExceptions.php(100): Illuminate\Foundation\Bootstrap\HandleExceptions->renderHttpResponse()
+#11 [internal function]: Illuminate\Foundation\Bootstrap\HandleExceptions->handleException()
+#12 {main}
+  thrown in /home/postrangsuc/public_html/vendor/laravel/framework/src/Illuminate/Container/Container.php on line 853
+[28-Jul-2021 03:51:11 Europe/London] PHP Fatal error:  Uncaught ErrorException: Method ReflectionParameter::getClass() is deprecated in /home/postrangsuc/public_html/vendor/laravel/framework/src/Illuminate/Container/Container.php:853
+Stack trace:
+#0 /home/postrangsuc/public_html/vendor/laravel/framework/src/Illuminate/Container/Container.php(853): Illuminate\Foundation\Bootstrap\HandleExceptions->handleError()
+#1 /home/postrangsuc/public_html/vendor/laravel/framework/src/Illuminate/Container/Container.php(816): Illuminate\Container\Container->resolveDependencies()
+#2 /home/postrangsuc/public_html/vendor/laravel/framework/src/Illuminate/Container/Container.php(667): Illuminate\Container\Container->build()
+#3 /home/postrangsuc/public_html/vendor/laravel/framework/src/Illuminate/Container/Container.php(265): Illuminate\Container\Container->resolve()
+#4 /home/postrangsuc/public_html/vendor/laravel/framework/src/Illuminate/Container/Container.php(785): Illuminate\Container\Container->Illuminate\Container\{closure}()
+#5 /home/postrangsuc/public_html/vendor/laravel/framework/src/Illuminate/Container/Container.php(667): Illuminate\Container\Container->build()
+#6 /home/postrangsuc/public_html/vendor/laravel/framework/src/Illuminate/Container/Container.php(615): Illuminate\Container\Container->resolve()
+#7 /home/postrangsuc/public_html/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(767): Illuminate\Container\Container->make()
+#8 /home/postrangsuc/public_html/vendor/laravel/framework/src/Illuminate/Foundation/Bootstrap/HandleExceptions.php(170): Illuminate\Foundation\Application->make()
+#9 /home/postrangsuc/public_html/vendor/laravel/framework/src/Illuminate/Foundation/Bootstrap/HandleExceptions.php(123): Illuminate\Foundation\Bootstrap\HandleExceptions->getExceptionHandler()
+#10 /home/postrangsuc/public_html/vendor/laravel/framework/src/Illuminate/Foundation/Bootstrap/HandleExceptions.php(100): Illuminate\Foundation\Bootstrap\HandleExceptions->renderHttpResponse()
+#11 [internal function]: Illuminate\Foundation\Bootstrap\HandleExceptions->handleException()
+#12 {main}
+  thrown in /home/postrangsuc/public_html/vendor/laravel/framework/src/Illuminate/Container/Container.php on line 853
