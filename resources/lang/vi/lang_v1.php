@@ -284,7 +284,7 @@ return [
     'rack' => 'Giá đỡ',
     'row' => 'Hàng',
     'position' => 'Chức vụ',
-    'total_weight' => 'Tổng cân nặng ',
+    'total_weight' => 'Tổng cân nặng',
     'seed_weight' => 'Cân nặng hột',
     'golden_age' => 'Tuổi vàng',
     'processing_price' => 'Giá gia công',

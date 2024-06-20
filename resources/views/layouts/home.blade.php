@@ -376,7 +376,7 @@
 
 
         </section>
-        <section class="section-3 edge-top">
+        <section class="section-3 edge-top" style="background: #fab704 !important">
             <div class="container section-3-dad">
                 <h2 class="h2-section ">
                     <span class="section-3-span">
