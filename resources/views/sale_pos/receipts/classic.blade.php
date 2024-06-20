@@ -156,6 +156,7 @@
                         </p>
                         <p>
                             <b>Số tài khoản </b> <i>(Bank Account): </i>
+                            {!! $receipt_details->accountNumber !!}, {!! $receipt_details->bankName !!}
                             {{-- @if (!empty($receipt_details->contact) && !empty($receipt_details->website))
                                 ,
                             @endif
