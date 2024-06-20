@@ -334,18 +334,18 @@
       var div = $(this).parent();
       if (weight > 0) {
           $('.convert-gold').remove();
-          var value = (weight / 100).toFixed(3);
+          var value = (weight / 100).toFixed(4);
           if (value < 0.1) {
-              var change = parseFloat(weight).toFixed(3).replace(/\.?0+$/, "");
+              var change = parseFloat(weight).toFixed(4).replace(/\.?0+$/, "");
               var convert = change + ' Ly';
           } else if (value < 1) {
-              var change = parseFloat(weight / 10).toFixed(3).replace(/\.?0+$/, "");
+              var change = parseFloat(weight / 10).toFixed(4).replace(/\.?0+$/, "");
               var convert = change + ' Phân';
           } else if (value < 10) {
-              var change = parseFloat(value).toFixed(3).replace(/\.?0+$/, "");
+              var change = parseFloat(value).toFixed(4).replace(/\.?0+$/, "");
               var convert = change + ' Chỉ';
           } else {
-              var change = parseFloat(weight / 1000).toFixed(3).replace(/\.?0+$/, "");
+              var change = parseFloat(weight / 1000).toFixed(4).replace(/\.?0+$/, "");
               var convert = change + ' Lượng';
           }
           var show =
