@@ -156,6 +156,9 @@
                         </p>
                         <p>
                             <b>Số tài khoản </b> <i>(Bank Account): </i>
+                            @if ($receipt_details->accountNumber && $receipt_details->bankName && $receipt_details->total > 0)
+                                {!! $receipt_details->accountNumber !!}, {!! $receipt_details->bankName !!}
+                            @endif
                             {{-- @if (!empty($receipt_details->contact) && !empty($receipt_details->website))
                                 ,
                             @endif
