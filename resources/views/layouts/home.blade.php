@@ -199,7 +199,7 @@
                                 <li class="nav-item bold"><a class="nav-link"
                                         href="../demotrangsuc/feature/index.html">TÍNH NĂNG</a></li>
                                 <li class="nav-item bold"><a class="nav-link"
-                                        href="../demotrangsuc/pricing/index.html">MUA &amp; THỬ
+                                        href="../demotrangsuc/pricing/index.html">SỬ DỤNG
                                         NGAY</a>
                                 </li>
                                 <li class="nav-item bold"><a class="nav-link"
@@ -230,7 +230,7 @@
                     <h3 class="header-name-1 text-center" style='margin-bottom:10px;'>Một Giải pháp Toàn diện cho Hệ
                         thống bán Sỉ Lẻ Trang sức</h3>
                     <a class="learn-more white bold" style='text-align:center;' href="{{ route('login') }}">
-                        Đăng ký dùng thử ngay
+                        Sử dụng ngay
                     </a>
 
                 </div>
@@ -298,7 +298,7 @@
                     </p>
                     <a class="button-section bold" href="{{ route('login') }}">
                         <span>
-                            Mua &amp; thử ngay
+                            Sử dụng ngay
                         </span>
                     </a>
                 </div>
