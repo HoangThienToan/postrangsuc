@@ -436,6 +436,12 @@
           div.find('.convert-gold').remove();
       }
     })
+    $('#numberInput').on('input', function() {
+      // Execute non-digit number
+      $(this).val($(this).val().replace(/[^0-9]/g, ''));
+      // Add comma in number
+      $(this).val($(this).val().replace(/\B(?=(\d{3})+(?!\d))/g, "."));
+    });
   });
 </script>
 @endsection

@@ -348,12 +348,17 @@
               var change = parseFloat(weight / 1000).toFixed(4).replace(/\.?0+$/, "");
               var convert = change + ' Lượng';
           }
-          var show =
-              `<label class='text-primary convert-gold' style='padding:4px 12px'>${convert}</label>`
+          var show = `<label class='text-primary convert-gold' style='padding:4px 12px'>${convert}</label>`
           div.append(show);
       } else {
           div.find('.convert-gold').remove();
       }
     })
+    $('#numberInput').on('input', function() {
+      // Execute non-digit number
+      $(this).val($(this).val().replace(/[^0-9]/g, ''));
+      // Thêm dấu chấm vào số
+      $(this).val($(this).val().replace(/\B(?=(\d{3})+(?!\d))/g, "."));
+    });
   });
 </script>
