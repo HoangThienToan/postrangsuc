@@ -108,11 +108,6 @@
 
     <script src="">
         $(document).ready(function() {
-            $('.price').on('input', function() {
-                $(this).val($(this).val().replace(/[^0-9]/g, ''));
-                // Add comma in number
-                $(this).val($(this).val().replace(/\B(?=(\d{3})+(?!\d))/g, "."));
-            })
         });
     </script>
     @include('sale_pos.partials.keyboard_shortcuts')

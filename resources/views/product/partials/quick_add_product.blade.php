@@ -355,10 +355,23 @@
       }
     })
     $('#single_dpp').on('input', function() {
-      // Execute non-digit number
-      $(this).val($(this).val().replace(/[^0-9]/g, ''));
-      // Thêm dấu chấm vào số
-      $(this).val($(this).val().replace(/\B(?=(\d{3})+(?!\d))/g, "."));
+      var price = $('#single_dpp').val().replace(/[^0-9]/g, ''); // Loại bỏ tất cả các ký tự không phải số
+      var thousand = (price / 1000).toFixed(0);
+      var million = (price / 1000000).toFixed(4).replace(/\.?0+$/, "");
+      var div = $(this).parent();
+
+      div.find('.convert-price').remove(); // Xóa tất cả các thẻ label chứa giá trị đã chuyển đổi
+
+      if (price > 1000) {
+          if (million > 1) {
+              var convert = million + ' Triệu';
+          } else {
+              var convert = thousand + ' Nghìn';
+          }
+          var show =
+              `<label class='text-primary convert-price' style='padding:4px 8px'>${convert}</label>`;
+          div.append(show);
+      }
     });
   });
 </script>

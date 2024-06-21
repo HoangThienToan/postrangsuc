@@ -356,3 +356,23 @@ $common_settings = session()->get('business.common_settings');
 		<i class="fa fa-times text-danger pos_remove_row cursor-pointer" aria-hidden="true"></i>
 	</td>
 </tr>
+<script>
+	$(document).ready(function() {
+		$('.price').on('input', function() {
+			var price = $('.price').val().replace(/[^0-9]/g, ''); // Loại bỏ tất cả các ký tự không phải số
+			var thousand = (price / 1000).toFixed(0);
+			var million = (price / 1000000).toFixed(4).replace(/\.?0+$/, "");
+			var div = $(this).parent();
+			div.find('.convert-price').remove(); // Xóa tất cả các thẻ label chứa giá trị đã chuyển đổi
+			if (price > 1000) {
+				if (million > 1) {
+					var convert = million + ' Triệu';
+				} else {
+					var convert = thousand + ' Nghìn';
+				}
+				var show = `<label class='text-primary convert-price' style='padding:4px 12px; float:left'>${convert}</label>`;
+				div.append(show);
+			}
+		})
+	});
+</script>
