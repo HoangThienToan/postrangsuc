@@ -354,7 +354,7 @@
           div.find('.convert-gold').remove();
       }
     })
-    $('#numberInput').on('input', function() {
+    $('#single_dpp').on('input', function() {
       // Execute non-digit number
       $(this).val($(this).val().replace(/[^0-9]/g, ''));
       // Thêm dấu chấm vào số
