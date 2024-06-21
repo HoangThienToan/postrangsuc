@@ -411,7 +411,7 @@
     $(document).on('click', '#toggle_extend', function() {
       $('.extend').toggle();
     });
-    $('#weight').on('keyup', function() {
+    $('#weight').on('input', function() {
       var weight = $('#weight').val();
       var div = $(this).parent();
       if (weight > 0) {
