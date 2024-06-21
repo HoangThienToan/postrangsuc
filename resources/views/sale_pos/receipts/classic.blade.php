@@ -1,7 +1,5 @@
-<!-- business information here -->
-{{-- <div style="background-image: url({{ asset('/uploads/media/mauhoadon1.png') }});"> --}}
 {{-- for A5 --}}
-@if ('5')
+@if (false)
     <style>
         .font-sell {
             color: #000;
@@ -328,7 +326,7 @@
                         <p>
                             <b>Tên khách hàng </b> <i>(Customer's name): </i>
                             @if (!empty($receipt_details->customer_info))
-                                {{ str_replace('<br>', '', $receipt_details->customer_info) }}
+                                {{ str_replace('<br>', '', $receipt_details->customer_name) }}
                             @endif
                         </p>
                         <p>
@@ -339,9 +337,6 @@
                         </p>
                         <p>
                             <b>Địa chỉ </b> <i>(Address): </i>
-                            @if (!empty($receipt_details->customer_info_address))
-                                {{ str_replace('<br>', '', $receipt_details->customer_info_address) }}
-                            @endif
                         </p>
                         <p>
                             <b>Hình thức thanh toán </b> <i>(Payment method): </i>
@@ -836,6 +831,8 @@
 
     </div>
 @else
+    {{-- @dd($receipt_details); --}}
+
     <style>
         .font-sell {
             color: #000;
@@ -917,7 +914,6 @@
         <div class="row">
             <!-- Logo -->
             @php
-                // dd($receipt_details);
                 $date = date('d');
                 $month = date('m');
                 $year = date('Y');
@@ -1166,7 +1162,7 @@
                         <p>
                             <b>Tên khách hàng </b> <i>(Customer's name): </i>
                             @if (!empty($receipt_details->customer_info))
-                                {{ str_replace('<br>', '', $receipt_details->customer_info) }}
+                                {{ str_replace('<br>', '', $receipt_details->customer_name) }}
                             @endif
                         </p>
                         <p>
@@ -1177,9 +1173,6 @@
                         </p>
                         <p>
                             <b>Địa chỉ </b> <i>(Address): </i>
-                            @if (!empty($receipt_details->customer_info_address))
-                                {{ str_replace('<br>', '', $receipt_details->customer_info_address) }}
-                            @endif
                         </p>
                         <p>
                             <b>Hình thức thanh toán </b> <i>(Payment method): </i>
