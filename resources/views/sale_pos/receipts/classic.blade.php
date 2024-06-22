@@ -910,7 +910,7 @@
                 <p>Chuyển khoản <i>(QR Code)</i></p>
                 <div style="width:100%" class="center">
                     <!-- QR-code -->
-                    @if ($receipt_details->accountNumber && $receipt_details->bankCode && $receipt_details->total > 0)
+                    @if ($receipt_details->accountNumber && $receipt_details->bankCode)
                         <p class='qr-code center'>
                             <img class="width-response"
                                 src="https://api.vietqr.io/image/{{ $receipt_details->bankCode }}-{{ $receipt_details->accountNumber }}-yBe658T.jpg?accountName={{ $receipt_details->accountHolderName }}&amount={{ intval(abs($receipt_details->total)) }}&addInfo={{ str_replace(' ', '%20', $receipt_details->display_name . $receipt_details->invoice_no) }}"
