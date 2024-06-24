@@ -126,7 +126,7 @@
             font-size: 10px !important;
             font-family: 'Times New Roman', Times, serif !important;
             max-width: 90% !important;
-            margin: 10px auto !important;
+            margin: 0 auto !important;
         }
 
         .p-sell {
