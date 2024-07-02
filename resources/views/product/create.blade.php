@@ -411,6 +411,50 @@
     $(document).on('click', '#toggle_extend', function() {
       $('.extend').toggle();
     });
+    $('#weight').on('input', function() {
+      var weight = $('#weight').val();
+      var div = $(this).parent();
+      if (weight > 0) {
+          $('.convert-gold').remove();
+          var value = (weight / 100).toFixed(4);
+          if (value < 0.1) {
+              var change = parseFloat(weight).toFixed(4).replace(/\.?0+$/, "");
+              var convert = change + ' Ly';
+          } else if (value < 1) {
+              var change = parseFloat(weight / 10).toFixed(4).replace(/\.?0+$/, "");
+              var convert = change + ' Phân';
+          } else if (value < 10) {
+              var change = parseFloat(value).toFixed(4).replace(/\.?0+$/, "");
+              var convert = change + ' Chỉ';
+          } else {
+              var change = parseFloat(weight / 1000).toFixed(4).replace(/\.?0+$/, "");
+              var convert = change + ' Lượng';
+          }
+          var show = `<label class='text-primary convert-gold' style='padding:4px 12px'>${convert}</label>`
+          div.append(show);
+      } else {
+          div.find('.convert-gold').remove();
+      }
+    })
+    $('#single_dpp').on('input', function() {
+      var price = $('#single_dpp').val().replace(/[^0-9]/g, ''); // Loại bỏ tất cả các ký tự không phải số
+      var thousand = (price / 1000).toFixed(0);
+      var million = (price / 1000000).toFixed(4).replace(/\.?0+$/, "");
+      var div = $(this).parent();
+
+      div.find('.convert-price').remove(); // Xóa tất cả các thẻ label chứa giá trị đã chuyển đổi
+
+      if (price > 1000) {
+          if (million > 1) {
+              var convert = million + ' Triệu';
+          } else {
+              var convert = thousand + ' Nghìn';
+          }
+          var show =
+              `<label class='text-primary convert-price' style='padding:4px 8px'>${convert}</label>`;
+          div.append(show);
+      }
+    });
   });
 </script>
 @endsection

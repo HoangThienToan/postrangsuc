@@ -1004,11 +1004,11 @@ class TransactionUtil extends Util
             ->setBeneficiaryOrganization($output['bankCode'], $output['accountNumber'])
             ->setTransactionAmount($total_amount);
             // ->setAdditionalDataFieldTemplate();
-            $output['qrCode'] = QrCode::format('png')->size(200)->generate($this->build());
+            $output['qrCode'] = QrCode::format('png')->size(80)->generate($this->build());
         }
         $output['tokenInvoice'] = $transaction->invoice_token;
         if($output['tokenInvoice']) {
-            $output['qrInvoice'] = QrCode::format('png')->size(100)->generate('https://' . $_SERVER['HTTP_HOST'] . '/bill/invoice/' . $transaction->invoice_token);
+            $output['qrInvoice'] = QrCode::format('png')->size(80)->generate('https://' . $_SERVER['HTTP_HOST'] . '/bill/invoice/' . $transaction->invoice_token);
         }
         //Display name
         $output['display_name'] = $output['business_name'];

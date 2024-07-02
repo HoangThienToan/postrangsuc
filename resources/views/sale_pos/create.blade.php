@@ -107,7 +107,8 @@
     <script src="{{ asset('js/buysell.js?v=' . $asset_v) }}"></script>
 
     <script src="">
-        $(document).ready(function() {});
+        $(document).ready(function() {
+        });
     </script>
     @include('sale_pos.partials.keyboard_shortcuts')
     <!-- Call restaurant module if defined -->
@@ -140,11 +141,13 @@
             display: flex;
             justify-content: center;
         }
-        .swal-button--confirm{
+
+        .swal-button--confirm {
             background: rgba(25, 135, 84);
             color: #fff;
         }
-        .swal-button--cancel{
+
+        .swal-button--cancel {
             background: #dc3545;
             color: #fff;
 

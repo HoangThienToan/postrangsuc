@@ -11,7 +11,7 @@ return [
     |
     */
     'commodities' => 'Loại hàng hóa',
-    'total_weight' => 'Tổng cân nặng ',
+    'total_weight' => 'Tổng cân nặng',
     'seed_weight' => 'Cân nặng hột',
     'golden_age' => 'Tuổi vàng',
     'processing_price' => 'Giá gia công',

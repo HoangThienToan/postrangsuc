@@ -720,7 +720,6 @@
 				<!-- QR-code -->
 				@if ($receipt_details->total > 0 && $receipt_details->qrCode)
 				<div style="width:100%;display: flex;flex-direction: column;" class="center">
-					<!-- QR-code -->
 					@if ($receipt_details->total > 0 && $receipt_details->qrCode)
 					<p class="qr-code">
 						<img width="100%" src="data:image/png;base64,{{ base64_encode($receipt_details->qrCode) }}" alt="">

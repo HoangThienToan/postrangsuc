@@ -1595,7 +1595,7 @@ class SellPosController extends Controller
     public function printInvoice(Request $request, $transaction_id)
     {
         if (request()->ajax()) {
-            // try {
+            try {
                 $output = ['success' => 0,
                         'msg' => trans("messages.something_went_wrong")
                         ];
@@ -1672,13 +1672,13 @@ class SellPosController extends Controller
                 if (!empty($receipt)) {
                     $output = ['success' => 1, 'receipt' => $receipt];
                 }
-            // } catch (\Exception $e) {
-            //     \Log::emergency("File:" . $e->getFile(). "Line:" . $e->getLine(). "Message:" . $e->getMessage());
+            } catch (\Exception $e) {
+                \Log::emergency("File:" . $e->getFile(). "Line:" . $e->getLine(). "Message:" . $e->getMessage());
                 
-            //     $output = ['success' => 0,
-            //             'msg' => trans("messages.something_went_wrong")
-            //             ];
-            // }
+                $output = ['success' => 0,
+                        'msg' => trans("messages.something_went_wrong")
+                        ];
+            }
 
             return $output;
         }

@@ -1,15 +1,11 @@
-<!-- business information here -->
-{{-- <div style="background-image: url({{ asset('/uploads/media/mauhoadon1.png') }});"> --}}
+{{-- for A5 --}}
 <style>
     .font-sell {
         color: #000;
         line-height: 1.2;
-        max-height: 1200px;
-        font-family: 'Times New Roman', Times, serif
-    }
-
-    .pt-2 {
-        padding-top: 72px !important;
+        font-family: 'Times New Roman', Times, serif;
+        max-width: 86%;
+        margin: 10px auto !important;
     }
 
     .p-sell {
@@ -65,22 +61,134 @@
         background: #fff;
     }
 
-    @media print {
-        /* .print {
-            background-image: url({{ asset('uploads/frame/mauhoadon.png') }});
-            background-size: cover;
-            background-position: center;
-        } */
+    .print-image {
+        width: 75%;
+        position: absolute;
+        top: 20%;
+        right: 12%;
+    }
+
+    .height-response {
+        width: 150px;
+    }
+
+    .width-response {
+        width: 100%;
+    }
+
+    .font-response {
+        font-size: 20px;
+    }
+
+    .font-title {
+        font-size: 20px;
+    }
+
+    .pad-response {
+        padding-bottom: 30px;
+    }
+
+    @media (max-width: 700px) {
+        .height-response {
+            width: 120px;
+        }
+
+        .width-response {
+            width: 80%;
+        }
+
+        .pad-response {
+            padding: 0;
+        }
+
+        .font-response {
+            font-size: 14px !important;
+        }
+
+        .font-title {
+            font-size: 14px;
+        }
+
+        .hide-response {
+            display: none;
+        }
+
+        .print-image {
+            width: 75%;
+            position: absolute;
+            top: 20%;
+            right: 14%;
+        }
+
+        .font-sell {
+            color: #000 !important;
+            line-height: 1 !important;
+            font-size: 10px !important;
+            font-family: 'Times New Roman', Times, serif !important;
+            max-width: 90% !important;
+            margin: 0 auto !important;
+        }
+
+        .p-sell {
+            padding-left: 8px;
+            padding-right: 8px;
+        }
+
+
+        .p-total {
+            padding: 6px 8px 0 0 !important;
+        }
+
+        .p-word {
+            padding: 8px !important;
+        }
+
+        .m-2 {
+            margin-bottom: 5px !important;
+        }
+
+        .d-none {
+            display: none !important;
+        }
+
+        .between {
+            display: flex !important;
+            justify-content: space-between !important;
+        }
+
+        .around {
+            display: flex !important;
+            justify-content: space-around !important;
+        }
+
+        .center {
+            display: flex !important;
+            justify-content: center !important;
+            align-items: center !important;
+        }
+
+        .border {
+            border: 1px solid #000;
+        }
+
+        h6 {
+            font-family: monospace;
+            width: 100%;
+            text-align: center;
+            line-height: 0.1em;
+        }
+
+        h6 span {
+            background: #fff;
+        }
     }
 </style>
-<img src="{{ asset('/uploads/media/mauhoadon1.png') }}" style="width: 100%; height:-webkit-fill-available; position:absolute; z-index:1234; top:-16px; right:0" alt="">
-<img src="{{ asset('/uploads/media/trongdong.jpg') }}" style="width: 75%; position: absolute; top: 20%; right: 12%; opacity: 0.3;">
-{{-- <div style="background-image:url({{ asset('/uploads/media/mauhoadon1.png') }}); background-size:cover;" class="print"> --}}
-<div style="max-width: 86%; margin:10px auto !important; " class="font-sell">
+<img src="{{ asset('/uploads/media/mauhoadon1.png') }}" style="width: 100%; height:-webkit-fill-available; position:absolute; z-index:1234; top:-16px; right:0" alt="" class="hide-response">
+<img src="{{ asset('/uploads/media/trongdong.jpg') }}" style="opacity: 0.3;" class="print-image">
+<div style="" class="font-sell">
     <div class="row">
         <!-- Logo -->
         @php
-        // dd($receipt_details);
         $date = date('d');
         $month = date('m');
         $year = date('Y');
@@ -98,7 +206,7 @@
             {{-- @endif --}}
             <center>
                 <div>
-                    <h4><b>HÓA ĐƠN BÁN HÀNG</b> <i>(BILL OF SALE)</i></h4>
+                    <p class="font-title"><b>HÓA ĐƠN BÁN HÀNG</b> <i>(BILL OF SALE)</i></p>
                     <p>
                         Ngày <i>(Date)</i> <?= $date ?> tháng <i>(month)</i> <?= $month ?> năm <i>(year)</i>
                         <?= $year ?>
@@ -129,7 +237,7 @@
                             <!-- Shop & Location Name  -->
                             <b>Đơn vị bán hàng</b> <i>(Seller): </i>
                             @if (!empty($receipt_details->display_name))
-                            <b style="font-size: 20px;">{{ mb_strtoupper($receipt_details->display_name) }}</b>
+                            <b class="font-response">{{ mb_strtoupper($receipt_details->display_name) }}</b>
                             @endif
                         </p>
 
@@ -141,15 +249,25 @@
                             @endif
                         </p>
 
-                        </p>
+                        {{-- Phone --}}
                         <p>
+                            @php
+                            $phone = $receipt_details->contact;
+                            $phone = str_replace(
+                            '<b>Số di động:</b>',
+                            '<b>Số điện thoại</b> <i>(Phone)</i>: ',
+                            $receipt_details->contact,
+                            );
+                            @endphp
                             @if (!empty($receipt_details->contact))
-                            {!! $receipt_details->contact !!}
+                            {!! $phone !!}
                             @endif
-
                         </p>
                         <p>
                             <b>Số tài khoản </b> <i>(Bank Account): </i>
+                            @if ($receipt_details->accountNumber && $receipt_details->bankName)
+                            {!! $receipt_details->accountNumber !!}, {!! $receipt_details->bankName !!}
+                            @endif
                             {{-- @if (!empty($receipt_details->contact) && !empty($receipt_details->website))
                                 ,
                             @endif
@@ -166,7 +284,7 @@
                     </div>
                     <div>
                         <span class="pull-right text-left " style="padding: 20px;">
-                            <img width="100%" src="data:image/png;base64,{{ base64_encode($receipt_details->qrInvoice) }}" alt="">
+                            <img src="data:image/png;base64,{{ base64_encode($receipt_details->qrInvoice) }}" alt="">
                         </span>
                     </div>
                 </div>
@@ -310,20 +428,17 @@
                     <p>
                         <b>Tên khách hàng </b> <i>(Customer's name): </i>
                         @if (!empty($receipt_details->customer_info))
-                        {{ str_replace('<br>', '', $receipt_details->customer_info) }}
+                        {{ str_replace('<br>', '', $receipt_details->customer_name) }}
                         @endif
                     </p>
                     <p>
-                        <b>Số điện thoại </b> <i>(Phone number): </i>
+                        <b>Số điện thoại </b> <i>(Phone): </i>
                         @if (!empty($receipt_details->customer_mobile))
                         {{ str_replace('<br>', '', $receipt_details->customer_mobile) }}
                         @endif
                     </p>
                     <p>
                         <b>Địa chỉ </b> <i>(Address): </i>
-                        @if (!empty($receipt_details->customer_info_address))
-                        {{ str_replace('<br>', '', $receipt_details->customer_info_address) }}
-                        @endif
                     </p>
                     <p>
                         <b>Hình thức thanh toán </b> <i>(Payment method): </i>
@@ -414,7 +529,8 @@
                         @endphp
                         @endif
                         <td class="text-center ">
-                            {{ $line['name'] }} {{ $line['product_variation'] }} {{ $line['variation'] }}
+                            {{ $line['name'] }} {{ $line['product_variation'] }}
+                            {{ $line['variation'] }}
                         </td>
                         <td width="10%" class="text-center ">{{ $quantity }}</td>
                         <td width="10%" class="text-center ">{{ $line['total_weight'] }}</td>
@@ -474,7 +590,8 @@
                         @endphp
                         @endif
 
-                        <td width="10%" class="text-center">{{ $lines_buy['sectors'] }} (Thu lại)</td>
+                        <td width="10%" class="text-center">{{ $lines_buy['sectors'] }} (Thu lại)
+                        </td>
                         <td width="10%" class="text-center"></td>
                         <td width="10%" class="text-center">{{ $lines_buy['total_weight'] }}</td>
                         <td width="10%" class="text-center">{{ $lines_buy['weight_seed'] }}</td>
@@ -503,7 +620,7 @@
                     } else {
                     $buy_sell = count($receipt_details->lines_buy);
                     }
-                    $tr = '<tr height="20px">
+                    $tr = '<tr height="20px" class="hide-response">
                         <td class="text-center"></td>
                         <td width="10%" class="text-center"></td>
                         <td width="10%" class="text-center"></td>
@@ -519,138 +636,76 @@
             </table>
             @endif
         </div>
-        {{-- @if ($receipt_details->lines_buy)
-			<p>#Mua</p>
-            <div class="col-xs-12" style="dispay:none">
-                @php
-                    $p_width = 40;
-                @endphp
-                @if (!empty($receipt_details->item_discount_label))
-                    @php
-                        $p_width -= 15;
-                    @endphp
-                @endif
-                <table class="table table-responsive table-bordered table-slim" style="background: ">
-                    <thead>
-                        <tr>
-                            <th class="text-center" width="15%">Loại hàng</th>
-                            <th class="text-center" width="10%">TL Tổng</th>
-                            <th class="text-center" width="10%">TL hột</th>
-                            <th class="text-center" width="10%">TL vàng</th>
-                            <th class="text-center" width="15%">Hàm lượng</th>
-                            <th class="text-center" width="15%">Đơn giá /100(chỉ)</th>
-                            <th class="text-center" width="25%">Thành tiền</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-
-
-                        @forelse($receipt_details->lines_buy as $lines_buy)
-                            <tr>
-
-                                @php
-                                    $totalline_buy = 0;
-                                    $goden_weight = 0;
-                                @endphp
-                                @if ($lines_buy['total_weight'])
-                                    @php
-                                        $goden_weight = $lines_buy['total_weight'] - $lines_buy['weight_seed'];
-                                        $totalline_buy = ($lines_buy['price'] * $goden_weight) / 100;
-                                        $totalbuy += $totalline_buy;
-                                    @endphp
-                                @endif
-
-                                <td width="10%" class="text-center">{{ $lines_buy['sectors'] }}</td>
-        <td width="10%" class="text-center">{{ $lines_buy['total_weight'] }}</td>
-        <td width="10%" class="text-center">{{ $lines_buy['weight_seed'] }}</td>
-        <td width="10%" class="text-center">{{ round($goden_weight, 2) }}</td>
-        <td width="10%" class="text-center">{{ $lines_buy['golden_age'] }}</td>
-        <td width="10%" class="text-center">
-            {{ number_format($lines_buy['price'], 0, ',', ',') }}
-        </td>
-        <td width="10%" class="text-center">
-            {{ number_format($totalline_buy, 0, ',', ',') }}
-        </td>
-        </tr>
-        @empty
-        <tr>
-            <td colspan="4">&nbsp;</td>
-        </tr>
-        @endforelse
-        </tbody>
-        </table>
-    </div>
-    @endif --}}
-    <div style="position: relative; border: 1px solid black;">
-        @if ($receipt_details->lines)
-        <p class="p-sell pt-2 text-right">
-            <b>Thành tiền bán </b><i style="font-weight: normal">(Sell amount): </i>
-            {{ number_format($totalsell, 0, ',', ',') }}
-        </p>
-        @endif
-        @if ($receipt_details->lines_buy)
-        <p class="text-right p-sell">
-            <b>Thành tiền mua </b><i style="font-weight: normal">(Buy amount): </i>
-            {{ number_format($totalbuy, 0, ',', ',') }}
-        </p>
-        @endif
-        {{-- @if ($receipt_details->lines_buy && $receipt_details->lines) --}}
-        <p class="text-right p-sell">
-            <b>Tổng tiền thanh toán </b><i style="font-weight: normal">(Total): </i>
-            {{ number_format($totalsell - $totalbuy, 0, ',', ',') }}
-        </p>
-        {{-- @endif --}}
-        <div class="p-word">
-            <b>
-                Số tiền bằng chữ <i style="font-weight: normal">(Amount in words)</i>:
-            </b>
-            @if ($receipt_details->total > 0)
-            {{ ucwords(preg_replace('/^âm/', '', $receipt_details->words)) }}
-            @else
-            <b>*Trả lại </b><i>(Refund):</i>
-            {{ ucwords(preg_replace('/^âm/', '', $receipt_details->words)) }}
-            @endif
-        </div>
-    </div>
-</div>
-
-<div class="row" style="display: none">
-    <div class="col-md-12">
-    </div>
-    <div class="col-xs-6">
-
-        <table class="table table-slim">
+        <div style="position: relative; border: 1px solid black;">
             @if ($receipt_details->lines)
-            <tr>
-                <th class="text-left">Thành tiền bán</th>
-                <td class="text-right">{{ number_format($totalsell, 0, ',', ',') }}</td>
-            </tr>
+            <p class="p-sell pt-2 text-right">
+                <b>Thành tiền bán </b><i style="font-weight: normal">(Sell amount): </i>
+                {{ number_format($totalsell, 0, ',', ',') }}
+            </p>
             @endif
             @if ($receipt_details->lines_buy)
-            <tr>
-                <th class="text-left">Thành tiền mua</th>
-                <td class="text-right">{{ number_format($totalbuy, 0, ',', ',') }}</td>
-            </tr>
+            <p class="text-right p-sell">
+                <b>Thành tiền mua </b><i style="font-weight: normal">(Buy amount): </i>
+                {{ number_format($totalbuy, 0, ',', ',') }}
+            </p>
             @endif
-            @if ($receipt_details->lines_buy && $receipt_details->lines)
-            <tr>
-                <th class="text-left">Tổng tiền</th>
-                <td class="text-right">{{ number_format($totalsell - $totalbuy, 0, ',', ',') }}</td>
-            </tr>
-            @endif
-            @if (!empty($receipt_details->payments))
-            @foreach ($receipt_details->payments as $payment)
-            <!-- <tr>
+            {{-- @if ($receipt_details->lines_buy && $receipt_details->lines) --}}
+            <p class="text-right p-sell">
+                <b>Tổng tiền thanh toán </b><i style="font-weight: normal">(Total): </i>
+                {{ number_format($totalsell - $totalbuy, 0, ',', ',') }}
+            </p>
+            {{-- @endif --}}
+            <div class="p-word">
+                <b>
+                    Số tiền bằng chữ <i style="font-weight: normal">(Amount in words)</i>:
+                </b>
+                @if ($receipt_details->total > 0)
+                {{ ucwords(preg_replace('/^âm/', '', $receipt_details->words)) }}
+                @else
+                <b>*Trả lại </b><i>(Refund):</i>
+                {{ ucwords(preg_replace('/^âm/', '', $receipt_details->words)) }}
+                @endif
+            </div>
+        </div>
+    </div>
+
+    <div class="row" style="display: none">
+        <div class="col-md-12">
+        </div>
+        <div class="col-xs-6">
+
+            <table class="table table-slim">
+                @if ($receipt_details->lines)
+                <tr>
+                    <th class="text-left">Thành tiền bán</th>
+                    <td class="text-right">{{ number_format($totalsell, 0, ',', ',') }}</td>
+                </tr>
+                @endif
+                @if ($receipt_details->lines_buy)
+                <tr>
+                    <th class="text-left">Thành tiền mua</th>
+                    <td class="text-right">{{ number_format($totalbuy, 0, ',', ',') }}</td>
+                </tr>
+                @endif
+                @if ($receipt_details->lines_buy && $receipt_details->lines)
+                <tr>
+                    <th class="text-left">Tổng tiền</th>
+                    <td class="text-right">{{ number_format($totalsell - $totalbuy, 0, ',', ',') }}</td>
+                </tr>
+                @endif
+                @if (!empty($receipt_details->payments))
+                @foreach ($receipt_details->payments as $payment)
+                <!-- <tr>
     <td>{{ $payment['method'] }}</td>
     <td class="text-right">{{ $payment['amount'] }}</td>
     <td class="text-right">{{ $payment['date'] }}</td>
    </tr> -->
-            @endforeach
-            @endif
+                @endforeach
+                @endif
 
-            <!-- Total Paid-->
-            @if (!empty($receipt_details->total_paid))
-            <!-- <tr>
+                <!-- Total Paid-->
+                @if (!empty($receipt_details->total_paid))
+                <!-- <tr>
     <th>
      {!! $receipt_details->total_paid_label !!}
     </th>
@@ -658,11 +713,11 @@
      {{ $receipt_details->total_paid }}
     </td>
    </tr> -->
-            @endif
+                @endif
 
-            <!-- Total Due-->
-            @if (!empty($receipt_details->total_due))
-            <!-- <tr>
+                <!-- Total Due-->
+                @if (!empty($receipt_details->total_due))
+                <!-- <tr>
     <th>
      {!! $receipt_details->total_due_label !!}
     </th>
@@ -670,10 +725,10 @@
      {{ $receipt_details->total_due }}
     </td>
    </tr> -->
-            @endif
+                @endif
 
-            @if (!empty($receipt_details->all_due))
-            <!-- <tr>
+                @if (!empty($receipt_details->all_due))
+                <!-- <tr>
     <th>
      {!! $receipt_details->all_bal_label !!}
     </th>
@@ -681,222 +736,183 @@
      {{ $receipt_details->all_due }}
     </td>
    </tr> -->
-            @endif
-        </table>
-    </div>
-
-    <div class="col-xs-6">
-        <div class="table-responsive">
-            <table class="table table-slim">
-                <tbody>
-                    @if (!empty($receipt_details->total_quantity_label))
-                    <tr class="color-555">
-                        <th style="width:70%">
-                            {!! $receipt_details->total_quantity_label !!}
-                        </th>
-                        <td class="text-right">
-                            {{ $receipt_details->total_quantity }}
-                        </td>
-                    </tr>
-                    @endif
-                    @if (!empty($receipt_details->total_exempt_uf))
-                    <tr>
-                        <th style="width:70%">
-                            @lang('lang_v1.exempt')
-                        </th>
-                        <td class="text-right">
-                            {{ $receipt_details->total_exempt }}
-                        </td>
-                    </tr>
-                    @endif
-                    <!-- Shipping Charges -->
-                    @if (!empty($receipt_details->shipping_charges))
-                    <tr>
-                        <th style="width:70%">
-                            {!! $receipt_details->shipping_charges_label !!}
-                        </th>
-                        <td class="text-right">
-                            {{ '₫ ' . number_format(floatval(str_replace(',', '', str_replace('₫ ', '', $receipt_details->shipping_charges))), 0, '.', ',') }}
-                        </td>
-                    </tr>
-                    @endif
-
-                    @if (!empty($receipt_details->packing_charge))
-                    <tr>
-                        <th style="width:70%">
-                            {!! $receipt_details->packing_charge_label !!}
-                        </th>
-                        <td class="text-right">
-                            {{ $receipt_details->packing_charge }}
-                        </td>
-                    </tr>
-                    @endif
-
-                    <!-- Discount -->
-                    @if (!empty($receipt_details->discount))
-                    <tr>
-                        <th>
-                            {!! $receipt_details->discount_label !!}
-                        </th>
-
-                        <td class="text-right">
-                            (-) {{ $receipt_details->discount }}
-                        </td>
-                    </tr>
-                    @endif
-
-                    @if (!empty($receipt_details->reward_point_label))
-                    <tr>
-                        <th>
-                            {!! $receipt_details->reward_point_label !!}
-                        </th>
-
-                        <td class="text-right">
-                            (-) {{ $receipt_details->reward_point_amount }}
-                        </td>
-                    </tr>
-                    @endif
-
-                    <!-- Tax -->
-                    @if (!empty($receipt_details->tax))
-                    <tr>
-                        <th>
-                            {!! $receipt_details->tax_label !!}
-                        </th>
-                        <td class="text-right">
-                            (+) {{ $receipt_details->tax }}
-                        </td>
-                    </tr>
-                    @endif
-
-                    @if ($receipt_details->round_off_amount > 0)
-                    <tr>
-                        <th>
-                            {!! $receipt_details->round_off_label !!}
-                        </th>
-                        <td class="text-right">
-                            {{ $receipt_details->round_off }}
-                        </td>
-                    </tr>
-                    @endif
-                    <!-- Total -->
-                    @if (intval($receipt_details->total - ($totalsell - $totalbuy)) > 2)
-                    <tr>
-                        <th>
-                            Tổng phụ phí
-                        </th>
-                        <td class="text-right">
-                            {{ intval($receipt_details->total - ($totalsell - $totalbuy)) }}
-                            @if (!empty($receipt_details->total_in_words))
-                            <br>
-                            <small>({{ $receipt_details->total_in_words }})</small>
-                            @endif
-                        </td>
-                    </tr>
-                    @endif
-                </tbody>
+                @endif
             </table>
         </div>
-    </div>
 
-
-    <div class="col-xs-12">
-        <p>{!! nl2br($receipt_details->additional_notes) !!}</p>
-    </div>
-</div>
-<div class="col-md-12">
-</div>
-{{-- <div class="col-md-12 d-none">
-        <div class="border-total-amount">
-            <div class="col-md-12" style="display: flex;">
-                <div style="width:70%">
-                    <div>
-                        @if ($receipt_details->total > 0)
-                            <b>
-                                Tổng thu:
-                            </b>
-                        @else
-                            <b>
-                                Tổng trả:
-                            </b>
+        <div class="col-xs-6">
+            <div class="table-responsive">
+                <table class="table table-slim">
+                    <tbody>
+                        @if (!empty($receipt_details->total_quantity_label))
+                        <tr class="color-555">
+                            <th style="width:70%">
+                                {!! $receipt_details->total_quantity_label !!}
+                            </th>
+                            <td class="text-right">
+                                {{ $receipt_details->total_quantity }}
+                            </td>
+                        </tr>
                         @endif
-                        {{ '₫ ' . number_format(abs($receipt_details->total), 0, '.', ',') }}
-</div>
-<div>
-    <b>
-        Số tiền bằng chữ:
-    </b>
-    {{ ucwords(preg_replace('/^âm/', '', $receipt_details->words)) }}
-</div>
-</div>
+                        @if (!empty($receipt_details->total_exempt_uf))
+                        <tr>
+                            <th style="width:70%">
+                                @lang('lang_v1.exempt')
+                            </th>
+                            <td class="text-right">
+                                {{ $receipt_details->total_exempt }}
+                            </td>
+                        </tr>
+                        @endif
+                        <!-- Shipping Charges -->
+                        @if (!empty($receipt_details->shipping_charges))
+                        <tr>
+                            <th style="width:70%">
+                                {!! $receipt_details->shipping_charges_label !!}
+                            </th>
+                            <td class="text-right">
+                                {{ '₫ ' . number_format(floatval(str_replace(',', '', str_replace('₫ ', '', $receipt_details->shipping_charges))), 0, '.', ',') }}
+                            </td>
+                        </tr>
+                        @endif
 
-<div style="width:30%">
-    <!-- QR-code -->
-    @if ($receipt_details->accountNumber && $receipt_details->bankCode && $receipt_details->total > 0)
-    <p class='qr-code'>
-        <img width="100%" src="https://api.vietqr.io/image/{{ $receipt_details->bankCode }}-{{ $receipt_details->accountNumber }}-yBe658T.jpg?accountName={{ $receipt_details->accountHolderName }}&amount={{ intval(abs($receipt_details->total)) }}&addInfo={{ str_replace(' ', '%20', $receipt_details->display_name . $receipt_details->invoice_no) }}" alt="">
+                        @if (!empty($receipt_details->packing_charge))
+                        <tr>
+                            <th style="width:70%">
+                                {!! $receipt_details->packing_charge_label !!}
+                            </th>
+                            <td class="text-right">
+                                {{ $receipt_details->packing_charge }}
+                            </td>
+                        </tr>
+                        @endif
 
-    </p>
+                        <!-- Discount -->
+                        @if (!empty($receipt_details->discount))
+                        <tr>
+                            <th>
+                                {!! $receipt_details->discount_label !!}
+                            </th>
 
-    @endif
-</div>
-</div>
+                            <td class="text-right">
+                                (-) {{ $receipt_details->discount }}
+                            </td>
+                        </tr>
+                        @endif
 
+                        @if (!empty($receipt_details->reward_point_label))
+                        <tr>
+                            <th>
+                                {!! $receipt_details->reward_point_label !!}
+                            </th>
 
-</div>
+                            <td class="text-right">
+                                (-) {{ $receipt_details->reward_point_amount }}
+                            </td>
+                        </tr>
+                        @endif
 
-<div class="spacer"></div>
-</div> --}}
-@if ($receipt_details->show_barcode)
-<div class="row">
-    <div class="col-xs-12">
-        {{-- Barcode --}}
-        <img class="center-block" src="data:image/png;base64,{{ DNS1D::getBarcodePNG($receipt_details->invoice_no, 'C128', 2, 30, [39, 48, 54], true) }}">
-    </div>
-</div>
-@endif
+                        <!-- Tax -->
+                        @if (!empty($receipt_details->tax))
+                        <tr>
+                            <th>
+                                {!! $receipt_details->tax_label !!}
+                            </th>
+                            <td class="text-right">
+                                (+) {{ $receipt_details->tax }}
+                            </td>
+                        </tr>
+                        @endif
 
-@if (!empty($receipt_details->footer_text))
-<div class="row">
-    <div class="col-xs-12">
-        {!! $receipt_details->footer_text !!}
-    </div>
-</div>
-@endif
-<div>
-    <div class="p-word between" style="height:150px; position: relative;">
-        <p>Người mua hàng <i>(Customer)</i></p>
-        <p>Người bán hàng <i>(Seller)</i></p>
-        <div>
-            <p>Chuyển khoản <i>(QR Code)</i></p>
-            <div style="width:100%;display: flex;flex-direction: column;" class="center">
-                <!-- QR-code -->
-                @if ($receipt_details->total > 0 && $receipt_details->qrCode)
-                <p class="qr-code">
-                    <img width="100%" src="data:image/png;base64,{{ base64_encode($receipt_details->qrCode) }}" alt="">
-
-                </p>
-                <span>{{urldecode($receipt_details->accountHolderName)}}</span>
-                <span>{{urldecode($receipt_details->accountNumber)}}</span>
-                @endif
+                        @if ($receipt_details->round_off_amount > 0)
+                        <tr>
+                            <th>
+                                {!! $receipt_details->round_off_label !!}
+                            </th>
+                            <td class="text-right">
+                                {{ $receipt_details->round_off }}
+                            </td>
+                        </tr>
+                        @endif
+                        <!-- Total -->
+                        @if (intval($receipt_details->total - ($totalsell - $totalbuy)) > 2)
+                        <tr>
+                            <th>
+                                Tổng phụ phí
+                            </th>
+                            <td class="text-right">
+                                {{ intval($receipt_details->total - ($totalsell - $totalbuy)) }}
+                                @if (!empty($receipt_details->total_in_words))
+                                <br>
+                                <small>({{ $receipt_details->total_in_words }})</small>
+                                @endif
+                            </td>
+                        </tr>
+                        @endif
+                    </tbody>
+                </table>
             </div>
         </div>
+
+
+        <div class="col-xs-12">
+            <p>{!! nl2br($receipt_details->additional_notes) !!}</p>
+        </div>
     </div>
-    <center style="position: relative; padding-bottom:30px">
-        <div>
-            <small> <b><i>(Cần kiểm tra, đối chiếu hóa đơn) </i></b><i>(Need to check and compare
-                    invoice)</i></small>
+    <div class="col-md-12">
+    </div>
+    @if ($receipt_details->show_barcode)
+    <div class="row">
+        <div class="col-xs-12">
+            {{-- Barcode --}}
+            <img class="center-block" src="data:image/png;base64,{{ DNS1D::getBarcodePNG($receipt_details->invoice_no, 'C128', 2, 30, [39, 48, 54], true) }}">
         </div>
-        <div>
-            <small><b>Tra cứu trực tuyến tại </b><i>(Retrieve invoice online at):
-                </i><b>{{ $receipt_details->website }}bill/invoice/</b></small>
+    </div>
+    @endif
+
+    @if (!empty($receipt_details->footer_text))
+    <div class="row">
+        <div class="col-xs-12">
+            {!! $receipt_details->footer_text !!}
         </div>
-        <div>
-            <small><b>Mã tra cứu </b><i>(Retrieve Code): </i><b>{{ $receipt_details->tokenInvoice }}</b></small>
+    </div>
+    @endif
+    <div>
+        <div class="p-word between" style="position: relative;" class="height-response">
+            <p>Người mua hàng <i>(Customer)</i></p>
+            <p>Người bán hàng <i>(Seller)</i></p>
+            <div>
+                <p>Chuyển khoản <i>(QR Code)</i></p>
+                <div style="width:100%" class="center">
+                    <!-- QR-code -->
+                    @if ($receipt_details->total > 0 && $receipt_details->qrCode)
+                    <div style="width:100%;display: flex;flex-direction: column;" class="center">
+                        @if ($receipt_details->total > 0 && $receipt_details->qrCode)
+                        <p class="qr-code">
+                            <img width="100%" src="data:image/png;base64,{{ base64_encode($receipt_details->qrCode) }}" alt="">
+
+                        </p>
+                        <span>{{urldecode($receipt_details->accountHolderName)}}</span>
+                        <span>{{urldecode($receipt_details->accountNumber)}}</span>
+                        @endif
+                    </div>
+                    @endif
+                </div>
+            </div>
         </div>
-    </center>
+        <center style="position: relative" class="pad-response">
+            <div>
+                <small> <b><i>(Cần kiểm tra, đối chiếu hóa đơn) </i></b><i>(Need to check and compare
+                        invoice)</i></small>
+            </div>
+            <div>
+                <small><b>Tra cứu trực tuyến tại </b><i>(Retrieve invoice online at):
+                    </i><b>{{ $receipt_details->website }}bill/invoice/</b></small>
+            </div>
+            <div>
+                <small><b>Mã tra cứu </b><i>(Retrieve Code): </i><b>{{ $receipt_details->tokenInvoice }}</b></small>
+            </div>
+        </center>
+    </div>
+
 </div>
-{{-- <div style="height: 150px">
-    </div> --}}
-</div>
-{{-- </div> --}}
