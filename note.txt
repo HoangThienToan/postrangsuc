@@ -1,1 +1,1 @@
-Không đẩy file receipt.blade.php vào daithangduc.phanmemvangta.com
+Không đẩy file in hóa đơn vào daithangduc
