@@ -151,15 +151,8 @@
 					</div>
 
 				</span>
-				<!-- <span class="pull-right text-left " style="padding: 20px;">
-					<img src="https://api.qrcode-monkey.com/qr/custom?size=50&data={{ 'http://' . $_SERVER['HTTP_HOST'] . '/bill/invoice/'. $invoice_token  }}" alt="">
-				</span> -->
-				@php
-				$qr_invoice = (request()->getHttpHost() . '/bill/invoice/'. $invoice_token);
-
-				@endphp
 				<span class="pull-right text-left " style="padding: 20px;">
-					<img src="https://api.qrcode-monkey.com/qr/custom?size=50&data={{ $qr_invoice }}" alt="">
+					<img width="100%" src="data:image/png;base64,{{ base64_encode($receipt_details->qrInvoice) }}" alt="">
 				</span>
 			</div>
 
@@ -725,9 +718,18 @@
 
 			<div style="width:30%">
 				<!-- QR-code -->
-				@if($receipt_details->accountNumber && $receipt_details->bankCode && $receipt_details->total > 0) <p class='qr-code'>
-					<img width="100%" src="https://api.vietqr.io/image/{{$receipt_details->bankCode}}-{{$receipt_details->accountNumber}}-yBe658T.jpg?accountName={{$receipt_details->accountHolderName}}&amount={{intval(abs($receipt_details->total))}}&addInfo={{ str_replace(' ', '%20', $receipt_details->display_name . $receipt_details->invoice_no) }}" alt="">
-				</p>
+				@if ($receipt_details->total > 0 && $receipt_details->qrCode)
+				<div style="width:100%;display: flex;flex-direction: column;" class="center">
+					<!-- QR-code -->
+					@if ($receipt_details->total > 0 && $receipt_details->qrCode)
+					<p class="qr-code">
+						<img width="100%" src="data:image/png;base64,{{ base64_encode($receipt_details->qrCode) }}" alt="">
+
+					</p>
+					<span>{{urldecode($receipt_details->accountHolderName)}}</span>
+					<span>{{urldecode($receipt_details->accountNumber)}}</span>
+					@endif
+				</div>
 				@endif
 			</div>
 		</div>

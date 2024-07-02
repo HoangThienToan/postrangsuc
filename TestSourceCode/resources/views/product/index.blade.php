@@ -226,6 +226,7 @@
                     fnDrawCallback: function(oSettings) {
                         __currency_convert_recursively($('#product_table'));
                     },
+                
             });
             // Array to track the ids of the details displayed rows
             var detailRows = [];

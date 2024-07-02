@@ -116,7 +116,9 @@ Route::middleware(['setData', 'auth', 'SetSessionData', 'language', 'timezone', 
     Route::get('/products/quick_add', 'ProductController@quickAdd');
     Route::post('/products/save_quick_product', 'ProductController@saveQuickProduct');
     Route::get('/products/get-combo-product-entry-row', 'ProductController@getComboProductEntryRow');
-    
+    Route::post('/products/get_product_row', 'ProductController@getProductRow');
+    Route::post('/products/save_inventory', 'ProductController@saveInventory');
+
     Route::resource('products', 'ProductController');
 
     Route::post('/purchases/update-status', 'PurchaseController@updateStatus');
@@ -169,7 +171,7 @@ Route::middleware(['setData', 'auth', 'SetSessionData', 'language', 'timezone', 
     Route::get('/sells/pos/get-product-suggestion', 'SellPosController@getProductSuggestion');
     Route::get('/sells/pos/get-featured-products/{location_id}', 'SellPosController@getFeaturedProducts');
     Route::resource('pos', 'SellPosController');
-    Route::resource('posbuysell', 'BuySellPosController');
+    Route::resource('posbuysell', 'BuySellPosController')->except(['show']);
 
     Route::resource('roles', 'RoleController');
 
@@ -182,7 +184,7 @@ Route::middleware(['setData', 'auth', 'SetSessionData', 'language', 'timezone', 
 
     //Invoice schemes..
     Route::get('/invoice-schemes/set_default/{id}', 'InvoiceSchemeController@setDefault');
-    Route::get('invoice-schemes/electronicBill', 'InvoiceSchemeController@electronicBill');
+    Route::post('/invoice-schemes/electronicBill', 'InvoiceSchemeController@electronicBill');
     Route::resource('invoice-schemes', 'InvoiceSchemeController');
 
     //Print Labels
@@ -441,7 +443,7 @@ Route::middleware(['setData', 'auth', 'SetSessionData', 'language', 'timezone'])
     Route::get('/download-purchase-order/{id}/pdf', 'PurchaseOrderController@downloadPdf')->name('purchaseOrder.downloadPdf');
     Route::get('/sells/{id}', 'SellController@show');
     Route::get('/buysell/{id}', 'BuySellController@show');
-    Route::get('/posbuysell/{id}', 'BuySellController@show');
+    Route::get('/posbuysell/{id}', 'BuySellPosController@show');
     Route::get('/sells/{transaction_id}/print', 'SellPosController@printInvoice')->name('sell.printInvoice');
     Route::get('/download-sells/{transaction_id}/pdf', 'SellPosController@downloadPdf')->name('sell.downloadPdf');
     Route::get('/download-quotation/{id}/pdf', 'SellPosController@downloadQuotationPdf')

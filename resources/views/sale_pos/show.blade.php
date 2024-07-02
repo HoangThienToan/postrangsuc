@@ -363,9 +363,17 @@
       @if($sell->type != 'sales_order')
       <a href="#" class="print-invoice btn btn-success" data-href="{{route('sell.printInvoice', [$sell->id])}}?package_slip=true"><i class="fas fa-file-alt" aria-hidden="true"></i> @lang("lang_v1.packing_slip")</a>
       @endif
-
+      <!-- @php
+      //dd($sell->Key);
+      @endphp -->
       @if(!$sell->sell_lines->isEmpty())
-      <a href="#" class="print-invoice btn btn-success" data-href="{{route('sell.printInvoice', [$sell->id])}}?electronic_bill=true"><i class="fa fa-file-alt" aria-hidden="true"></i> Xuất hóa đơn điện tử</a>
+      @if(!$sell->electronic_bill_id)
+      <a href="#" class="print-invoice btn btn-success" data-href="{{route('sell.printInvoice', [$sell->id])}}?electronic_bill=true&sketches=true"><i class="fa fa-receipt" aria-hidden="true"></i> Xuất mẫu hóa đơn điện tử</a>
+      <a href="#" class="print-invoice btn bg-red" data-href="{{route('sell.printInvoice', [$sell->id])}}?cancelling=true&sketches=true"><i class="fa fa-window-close" aria-hidden="true"></i> Hủy mẫu hóa đơn điện tử</a>
+      @endif
+
+      <a href="#" class="print-invoice btn btn-success" data-href="{{route('sell.printInvoice', [$sell->id])}}?electronic_bill=true"><i class="fa fa-receipt" aria-hidden="true"></i> Xuất hóa đơn điện tử</a>
+      <a href="#" class="print-invoice btn bg-red" data-href="{{route('sell.printInvoice', [$sell->id])}}?cancelling=true"><i class="fa fa-window-close" aria-hidden="true"></i> Hủy hóa đơn điện tử</a>
       @endif
       @can('print_invoice')
       <a href="#" class="print-invoice btn btn-primary" data-href="{{route('sell.printInvoice', [$sell->id])}}"><i class="fa fa-print" aria-hidden="true"></i> @lang("lang_v1.print_invoice")</a>

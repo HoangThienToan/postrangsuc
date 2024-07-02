@@ -1,7 +1,7 @@
 <head>
 	<link rel="preconnect" href="https://fonts.googleapis.com">
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-	<link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Noto+Sans:ital,wght@0,100..900;1,100..900&family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Oswald:wght@200..700&family=Work+Sans:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
 </head>
 <!-- <table id="labels" style="border-spacing: 0.1cm 0.1cm; overflow: hidden !important;"> -->
 <table align="center" valign="center" style="border-spacing: 2.5cm 0cm; ">
@@ -38,10 +38,10 @@
 									@endif
 									{{-- Product weight --}}
 									<span style="display: block !important;">
-										KLT: {{$page_product->weight ? $page_product->weight : ''}}
+										KLT: {{$page_product->weight ? $page_product->weight : 0}}
 									</span>
 									<span style="display: block !important;">
-										H: {{$page_product->seed_weight ? $page_product->seed_weight : ''}}
+										H: {{$page_product->seed_weight ? $page_product->seed_weight : 0}}
 									</span>
 								</div>
 								<div class="" style="width:50% ;text-align: left;">
@@ -52,7 +52,7 @@
 										KH: {{$page_product->description ? $page_product->description : ''}}
 									</span>
 									<span style="display: block !important;">
-										C: {{$page_product->default_sell_price ? substr(intval($page_product->default_sell_price), 0, -3) . 'K' : ''}}
+										C: {{$page_product->default_sell_price ? substr(intval($page_product->default_sell_price), 0, -3) . 'K' : 0}}
 									</span>
 								</div>
 							</div>
@@ -72,12 +72,12 @@
 
 							</div>
 							<div class="">
-								<span style="font-size: {{7*$factor}}px;">
+								<span style="font-size: {{5*$factor}}px;line-height:6px">
 									{{$business_location}}
 								</span>
 							</div>
 							<div class="" style="display:flex">
-								<span style="white-space: nowrap;font-size:7px;overflow: visible;">
+								<span style="white-space: nowrap;font-size:5px;overflow: visible; line-height:6px">
 									NSX: {{$page_product->brand ? $page_product->brand : ''}} | ĐC: {{$page_product->address ? $page_product->address : ''}}</span>
 								<!-- <i style="white-space: nowrap;font-size:10px">
 									@php
@@ -87,7 +87,7 @@
 								</i> -->
 
 							</div>
-							<div class="" style="display:flex; margin-top:1px">
+							<div class="" style="display:flex; margin-top:2px">
 								{{-- Barcode --}}
 								<img style="max-width:90% !important;height: {{$barcode_details->height*0.20}}in !important;" src="data:image/png;base64,{{DNS1D::getBarcodePNG($page_product->sub_sku, $page_product->barcode_type, 2,40,array(0, 0, 0), true)}}">
 								<!-- <img style="max-width:90% !important;height: {{$barcode_details->height*0.20}}in !important;" src="data:image/png;base64,{{DNS1D::getBarcodePNG(111111, $page_product->barcode_type, 2,40,array(0, 0, 0), true)}}"> -->
@@ -121,14 +121,17 @@
 
 <style type="text/css">
 	body {
-		font-family: "Noto Sans", sans-serif;
+		font-family: "{{$text_type}}",
+		sans-serif;
 	}
 
 	span {
+		line-height: 9px;
 		font-weight: 700;
 
-		font-size: {{10*$factor}}px;
-		/* font-size: {{10*$factor}}px; */
+		font-size: {{8*$factor}}px;
+		/* font-size: {{8*$factor}}px; */
+
 
 	}
 

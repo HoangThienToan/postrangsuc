@@ -644,7 +644,7 @@ class SellPosController extends Controller
         $from_pos_screen = true,
         $invoice_layout_id = null,
         $electronic_bill = false,
-        $invoice_token = ''
+        $sketches = false
     ) { 
         $output = ['is_enabled' => false,
                     'print_type' => 'browser',
@@ -684,7 +684,7 @@ class SellPosController extends Controller
         }
 
         if ($electronic_bill) {
-            $api = new ApiMatBao;
+            $api = new ApiMatBao($sketches);
             return $api->publishInvoice($receipt_details);
         }
         //If print type browser - return the content, printer - return printer config data, and invoice format config
@@ -699,7 +699,7 @@ class SellPosController extends Controller
             } else {
                 $layout = 'sale_pos.receipts.classicbuysell';
             }
-            $output['html_content'] = view($layout, compact('receipt_details', 'invoice_token'))->render();
+            $output['html_content'] = view($layout, compact('receipt_details'))->render();
         }
         
         return $output;
@@ -1595,7 +1595,7 @@ class SellPosController extends Controller
     public function printInvoice(Request $request, $transaction_id)
     {
         if (request()->ajax()) {
-            try {
+            // try {
                 $output = ['success' => 0,
                         'msg' => trans("messages.something_went_wrong")
                         ];
@@ -1610,15 +1610,41 @@ class SellPosController extends Controller
                     return $output;
                 }
                 $electronic_bill = !empty($request->input('electronic_bill')) ? true : false;
-
-                if ($electronic_bill && $transaction->Key) {
-                    $api = new ApiMatBao;
-                    $pdfUrl = $api->downloadPdf($transaction->Key);
-                    if ($pdfUrl) {
-                        $receipt['electronic_bill'] = $pdfUrl;
-                        return ['success' => 1, 'receipt' => $receipt];
+                $cancelling = !empty($request->input('cancelling')) ? true : false;
+                $sketches = !empty($request->input('sketches')) ? true : false;
+                $api = new ApiMatBao($sketches);
+                
+                if ($electronic_bill && !$cancelling && !$sketches && !$transaction->electronic_bill_id) {
+                    if ($transaction->Key) {
+                        $apisketches = new ApiMatBao();
+                        $status = $apisketches->cancelInvoice($transaction->Key);
+                        if ($status) {
+                            $transaction->Key = null;
+                            $transaction->electronic_bill_id = null;
+                            $transaction->save();
+                        }
+                    }
+                } else {
+                    if ($cancelling && $transaction->Key) {
+                        $status = $api->cancelInvoice($transaction->Key);
+                        $msg = $status ? 'Đã hủy hóa đơn' : 'Có lỗi đã xảy ra, thử lại sau';
+                        if ($status) {
+                            $transaction->Key = null;
+                            $transaction->electronic_bill_id = null;
+                            $transaction->save();
+                        }
+                        $success = $status ? 1 : 0;
+                        return ['success' => $success, 'msg' => $msg];
+                    }
+                    if ($electronic_bill && $transaction->Key) {
+                        $pdfUrl = $api->downloadPdf($transaction->Key);
+                        if ($pdfUrl) {
+                            $receipt['electronic_bill'] = $pdfUrl;
+                            return ['success' => 1, 'receipt' => $receipt];
+                        }
                     }
                 }
+                
                 $printer_type = 'browser';
                 if (!empty(request()->input('check_location')) && request()->input('check_location') == true) {
                     $printer_type = $transaction->location->receipt_printer_type;
@@ -1626,7 +1652,7 @@ class SellPosController extends Controller
 
                 $is_package_slip = !empty($request->input('package_slip')) ? true : false;
                 $invoice_layout_id = $transaction->is_direct_sale ? $transaction->location->sale_invoice_layout_id : null;
-                $receipt = $this->receiptContent($business_id, $transaction->location_id, $transaction_id, $printer_type, $is_package_slip, false, $invoice_layout_id, $electronic_bill, $transaction->invoice_token);
+                $receipt = $this->receiptContent($business_id, $transaction->location_id, $transaction_id, $printer_type, $is_package_slip, false, $invoice_layout_id, $electronic_bill, $sketches);
 
                 if ($electronic_bill && $receipt){
                     $data = $receipt[0];
@@ -1636,8 +1662,8 @@ class SellPosController extends Controller
                     $transaction->InvNo = $data['InvNo'];
                     $transaction->SO = $data['SO'];
                     $transaction->InvID = $data['InvID'];
+                    $transaction->electronic_bill_id = $sketches ? null :$data['electronic_bill_id'];
                     $transaction->save();
-                    $api = new ApiMatBao;
                     $pdfUrl = $api->downloadPdf($data['Key']);
                     if ($pdfUrl) {
                         $receipt['electronic_bill'] = $pdfUrl;
@@ -1646,13 +1672,13 @@ class SellPosController extends Controller
                 if (!empty($receipt)) {
                     $output = ['success' => 1, 'receipt' => $receipt];
                 }
-            } catch (\Exception $e) {
-                \Log::emergency("File:" . $e->getFile(). "Line:" . $e->getLine(). "Message:" . $e->getMessage());
+            // } catch (\Exception $e) {
+            //     \Log::emergency("File:" . $e->getFile(). "Line:" . $e->getLine(). "Message:" . $e->getMessage());
                 
-                $output = ['success' => 0,
-                        'msg' => trans("messages.something_went_wrong")
-                        ];
-            }
+            //     $output = ['success' => 0,
+            //             'msg' => trans("messages.something_went_wrong")
+            //             ];
+            // }
 
             return $output;
         }
@@ -1816,7 +1842,6 @@ class SellPosController extends Controller
             $invoice_layout_id = $transaction->is_direct_sale ? $transaction->location->sale_invoice_layout_id : null;
 
             $receipt = $this->receiptContent($transaction->business_id, $transaction->location_id, $transaction->id, 'browser', false, true, $invoice_layout_id);
-
             $title = $transaction->business->name . ' | ' . $transaction->invoice_no;
             return view('sale_pos.partials.show_invoice')
                     ->with(compact('receipt', 'title'));

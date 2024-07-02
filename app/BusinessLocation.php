@@ -33,7 +33,7 @@ class BusinessLocation extends Model
      * @param boolean $show_all = false
      * @param array $receipt_printer_type_attribute =
      *
-     * @return array
+     * @return array/object
      */
     public static function forDropdown($business_id, $show_all = false, $receipt_printer_type_attribute = false, $append_id = true, $check_permission = true)
     {

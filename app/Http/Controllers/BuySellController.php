@@ -1121,7 +1121,6 @@ class BuySellController extends Controller
         }
 
         $sell = $query->firstOrFail();
-
         $activities = Activity::forSubject($sell)
             ->with(['causer', 'subject'])
             ->latest()

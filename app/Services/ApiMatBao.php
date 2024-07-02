@@ -4,23 +4,28 @@ namespace App\Services;
 
 use GuzzleHttp\Client as GuzzleClient;
 use Psr\Http\Message\ResponseInterface;
+use App\ElectronicBill;
 
 class ApiMatBao
 {
     protected $httpClient;
     protected $apiUrl;
     protected $payload;
+    protected $EB_ID;
 
-    public function __construct()
+    public function __construct($sketches = true)
     {
         $this->httpClient = new Client();
-        $this->apiUrl = config('invoice.api_url') . "/api/";
-
+        $business_id = session()->get('user.business_id');
+        $ElectronicBill = ElectronicBill::where('business_id', $business_id)->where('status', 1)->first();
+        $EB = $sketches ? false : $ElectronicBill;
+        $this->EB_ID = $EB ? $EB->id : null;
+        $this->apiUrl = $EB ? $EB->api_baseUrl . "/api/" : config('invoice.api_url') . "/api/";
         $this->payload = [
-            'ApiUserName' => config('invoice.api_username'),
-            'ApiPassword' => config('invoice.api_password'),
+            'ApiUserName' => $EB ? $EB->api_username : config('invoice.api_username'),
+            'ApiPassword' => $EB ? $EB->api_password : config('invoice.api_password'),
             'ApiInvPattern' => 2,
-            'ApiInvSerial' => "C24MNV",
+            'ApiInvSerial' => $EB ? "C24MQP" : "C24MNV",
             // 'ApiInvSerial' => "C24TAT",
         ];
     }
@@ -29,9 +34,10 @@ class ApiMatBao
     public function publishInvoice($invoiceData)
     {
         $options = $this->processInvoiceData($invoiceData);
-
         $response = $this->request('POST', "v2/invoice/importAndPublishInv", $options);
+        // dd($response);
 
+        $response["data"][0]['electronic_bill_id'] = $this->EB_ID;
         $return = $response["status"] === "OK" ? $response["data"] : false;
 
         return $return;
@@ -45,7 +51,8 @@ class ApiMatBao
         ];
         
         $response = $this->request('POST', "v2/invoice/CancelInvoice", $options);
-        return $response;
+        $return = $response["status"] === "OK" ? $response["data"] : false;
+        return $return;
     }
 
     //điều chỉnh hóa đơn cũ
@@ -274,7 +281,7 @@ class ApiMatBao
         $data["AmountInWords"] = isset($data_invoice->words) ? $data_invoice->words : '';
         $data["Note"] = isset($data_invoice->additional_notes) ? $data_invoice->additional_notes : '';
         // $data["SO"] = $this->nextInvoiceNumber() ? $this->nextInvoiceNumber() : '';
-        $data["SO"] = $data_invoice->invoice_no;
+        // $data["SO"] = $data_invoice->invoice_no;
         //6144
         // $data["InvType"] = '';
         $data["DonViTienTe"] = "704";

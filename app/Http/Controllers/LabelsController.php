@@ -55,8 +55,9 @@ class LabelsController extends Controller
                                 ->select(DB::raw('CONCAT(name, ", ", COALESCE(description, "")) as name, id'))
                                 ->pluck('name', 'id');
 
+        $text_type = session()->get('currency.text_type');
         return view('labels.show')
-            ->with(compact('products', 'barcode_settings'));
+            ->with(compact('products', 'barcode_settings', 'text_type'));
     }
 
     /**
@@ -91,10 +92,19 @@ class LabelsController extends Controller
         try {
             $products = $request->get('products');
             $print = $request->get('print');
+            $print = $request->input('text_type');
+
+            $text_type = $request->session()->get('currency.text_type');
+            if ($request->input('text_type') && ($request->input('text_type') != $request->session()->get('currency.text_type'))) {
+                $request->session()->put('currency.text_type', $request->input('text_type'));
+                $request->session()->save();
+                $text_type = $request->input('text_type');
+            }
+
+            $print = $request->get('print');
             $barcode_setting = $request->get('barcode_setting');
             $business_id = $request->session()->get('user.business_id');
             $business = BusinessLocation::where('business_id', $business_id)->first();
-
             $business_lan = $business->landmark . ', ' ?? '';
 
             $business_city = $business->city . ', '?? '';
@@ -184,7 +194,7 @@ class LabelsController extends Controller
                 }
 
                 $output = view('labels.partials.preview_2')
-                            ->with(compact('print', 'page_products', 'business_location', 'business_name', 'barcode_details', 'margin_top', 'margin_left', 'paper_width', 'paper_height', 'is_first', 'is_last', 'factor'))->render();
+                            ->with(compact('print', 'page_products', 'business_location', 'business_name', 'barcode_details', 'margin_top', 'margin_left', 'paper_width', 'paper_height', 'is_first', 'is_last', 'factor', 'text_type'))->render();
                 print_r($output);
                 $mpdf->WriteHTML($output);
 

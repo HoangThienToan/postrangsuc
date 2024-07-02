@@ -108,6 +108,9 @@
                         <a href="#product_stock_report" data-toggle="tab" aria-expanded="true"><i class="fa fa-hourglass-half" aria-hidden="true"></i> @lang('report.stock_report')</a>
                     </li>
                     @endcan
+                    <li>
+                        <a href="#product_inventory" data-toggle="tab" aria-expanded="true"><i class="fa fa-clipboard" aria-hidden="true"></i></i> Kiểm kê kho</a>
+                    </li>
                 </ul>
 
                 <div class="tab-content">
@@ -124,6 +127,100 @@
                         @include('report.partials.stock_report_table')
                     </div>
                     @endcan
+                    <div class="tab-pane" id="product_inventory">
+                        <div class="box box-solid">
+                            <div class="box-header">
+                                <h3 class="box-title">{{ __('stock_adjustment.search_products') }}</h3>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <br>
+                                    {!! Form::checkbox('auto_hide', 1, true,
+                                    [ 'class' => 'input-icheck', 'id' => 'auto_hide']); !!} Tự động ẩn nếu kiểm hàng không có vấn đề
+                                </div>
+                            </div>
+                            <div class="box-body">
+                                <div class="row">
+                                    <div class="col-sm-8 col-sm-offset-2">
+                                        <div class="form-group">
+                                            <div class="input-group">
+                                                <span class="input-group-addon">
+                                                    <i class="fa fa-search"></i>
+                                                </span>
+                                                {!! Form::text('search_product', null, ['class' => 'form-control', 'id' => 'search_product_for_inventory', 'placeholder' => 'Tìm sản phẩm để kiểm kê kho']); !!}
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-10 col-sm-offset-1">
+                                        <input type="hidden" id="product_row_index" value="0">
+                                        <input type="hidden" id="total_amount" name="final_total" value="0">
+                                        {!! Form::open(['url' => action('ProductController@saveInventory'), 'method' => 'post',
+                                        'id' => 'product_inventory','class' => 'product_form']) !!}
+                                        <div class="table-responsive">
+                                            <table class="table table-bordered table-striped table-condensed" id="inventory_product_table">
+                                                <thead>
+                                                    <tr>
+                                                        <th class="col-sm-2 text-center">
+                                                            @lang('sale.product')
+                                                        </th>
+                                                        <th class=" text-center">
+                                                            @lang('sale.qty') kiểm kho
+                                                        </th>
+                                                        <th class=" text-center">
+                                                            @lang('sale.qty') thực tế
+                                                        </th>
+                                                        <th class="col-sm-2 text-center">
+                                                            @lang('sale.unit_price') (Công)
+                                                        </th>
+                                                        <th class="col-sm-2 text-center">
+                                                            @lang('sale.subtotal')
+                                                        </th>
+                                                        <th class="col-sm-2 text-center">
+                                                            Tình trạng
+                                                        </th>
+                                                        <th class="text-center"><i class="fa fa-trash" aria-hidden="true"></i></th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                </tbody>
+                                                <tfoot>
+                                                    <tr class="text-center">
+                                                        <td>
+                                                            <div class="pull-right"><b>Tổng mã hàng:</b> <span id="row_index">0.00</span></div>
+                                                        </td>
+                                                        <td>
+                                                            <div > <span id="total_argument">0.00</span></div>
+                                                        </td>
+                                                        <td>
+                                                            <div class="pull-right"><b>Tổng SL:</b> <span id="total_qty">0.00</span></div>
+                                                        </td>
+                                                        <td></td>
+
+                                                        <td>
+                                                            <div class="pull-right"><b>@lang('stock_adjustment.total_amount'):</b> <span id="total_inventory">0.00</span></div>
+                                                        </td>
+                                                    </tr>
+                                                </tfoot>
+                                            </table>
+                                        </div>
+                                        <div class="col-sm-12">
+                                            <div class="form-group col-sm-9">
+                                                <br>
+                                                {!! Form::checkbox('delete_redundancy', 1, false,
+                                                [ 'class' => 'input-icheck', 'id' => 'delete_redundancy']); !!} Hãy kiểm tra đủ số hàng của bạn trước, tùy chọn này sẽ xóa tất cả sản phẩm dư thừa nếu không nằm trong danh sách các sản phẩm (nếu nó chưa từng được giao dịch), chúng tôi không khuyến cáo sử dụng nó vì không thể hoàn trả lại những sản phẩm đã xóa.
+                                            </div>
+                                            <button type="submit" class="btn btn-primary pull-right ">Lưu</button>
+                                        </div>
+                                        {!! Form::close() !!}
+                                    </div>
+                                </div>
+                            </div>
+                        </div> <!--box end-->
+
+                    </div>
                 </div>
             </div>
         </div>
@@ -156,7 +253,7 @@
             processing: true,
             serverSide: true,
             aaSorting: [
-                [3, 'asc']
+                [12, 'desc']
             ],
             scrollY: "75vh",
             scrollX: true,
@@ -706,5 +803,316 @@
             },
         });
     });
+
+
+    $(document).ready(function() {
+        $("#auto_hide").parent(1).find("ins").click(function() {
+            let elements = $("#inventory_product_table tbody").find('input.quantity_status');
+            if ($("#auto_hide").is(":checked")) {
+                elements.each(function() {
+                    if ($(this).val() === "Đủ") {
+                        $(this).closest('tr').hide();
+                    } else if ($(this).val() === "Thừa") {
+                        $(this).closest('tr').show();
+                    }
+                });
+            } else {
+                elements.each(function() {
+                    $(this).closest('tr').show();
+                });
+            }
+        })
+
+        //Add products
+        if ($('#search_product_for_inventory').length > 0) {
+            //Add Product
+            $('#search_product_for_inventory')
+                .autocomplete({
+                    source: function(request, response) {
+                        $.getJSON(
+                            '/products/list', {
+                                location_id: $('#location_id').val(),
+                                term: request.term
+                            },
+                            response
+                        );
+                    },
+                    minLength: 2,
+                    response: function(event, ui) {
+                        if (ui.content.length == 1) {
+                            ui.item = ui.content[0];
+                            if (ui.item.qty_available > 0 && ui.item.enable_stock == 1) {
+                                $(this)
+                                    .data('ui-autocomplete')
+                                    ._trigger('select', 'autocompleteselect', ui);
+                                $(this).autocomplete('close');
+                            }
+                        } else if (ui.content.length == 0) {
+                            swal(LANG.no_products_found);
+                        }
+                    },
+                    focus: function(event, ui) {
+                        if (ui.item.qty_available <= 0) {
+                            return false;
+                        }
+                    },
+                    select: function(event, ui) {
+                        if (ui.item.qty_available > 0) {
+                            $(this).val(null);
+                            inventory_product_row(ui.item.variation_id);
+                        } else {
+                            alert(LANG.out_of_stock);
+                        }
+                    },
+                })
+                .autocomplete('instance')._renderItem = function(ul, item) {
+                    if (item.qty_available <= 0) {
+                        var string = '<li class="ui-state-disabled">' + item.name;
+                        if (item.type == 'variable') {
+                            string += '-' + item.variation;
+                        }
+                        string += ' (' + item.sub_sku + ') (Out of stock) </li>';
+                        return $(string).appendTo(ul);
+                    } else if (item.enable_stock != 1) {
+                        return ul;
+                    } else {
+                        var string = '<div>' + item.name;
+                        if (item.type == 'variable') {
+                            string += '-' + item.variation;
+                        }
+                        string += ' (' + item.sub_sku + ') </div>';
+                        return $('<li>')
+                            .append(string)
+                            .appendTo(ul);
+                    }
+                };
+        }
+
+        $('select#location_id').change(function() {
+            if ($(this).val()) {
+                $('#search_product_for_inventory').removeAttr('disabled');
+            } else {
+                $('#search_product_for_inventory').attr('disabled', 'disabled');
+            }
+            $('table#inventory_product_table tbody').html('');
+            $('#product_row_index').val(0);
+            update_table_total();
+        });
+
+        $(document).on('change', 'input.product_quantity', function() {
+            update_table_row($(this).closest('tr'));
+        });
+        $(document).on('change', 'input.product_unit_price', function() {
+            update_table_row($(this).closest('tr'));
+        });
+
+        $(document).on('click', '.remove_product_row', function() {
+            swal({
+                title: LANG.sure,
+                icon: 'warning',
+                buttons: true,
+                dangerMode: true,
+            }).then(willDelete => {
+                if (willDelete) {
+                    $(this)
+                        .closest('tr')
+                        .remove();
+                    update_table_total();
+                }
+            });
+        });
+
+        //Date picker
+        $('#transaction_date').datetimepicker({
+            format: moment_date_format + ' ' + moment_time_format,
+            ignoreReadonly: true,
+        });
+
+        $('form#product_inventory').validate();
+
+        inventory_table = $('#inventory_table').DataTable({
+            processing: true,
+            serverSide: true,
+            ajax: '/stock-adjustments',
+            columnDefs: [{
+                targets: 0,
+                orderable: false,
+                searchable: false,
+            }, ],
+            aaSorting: [
+                [1, 'desc']
+            ],
+            columns: [{
+                    data: 'action',
+                    name: 'action'
+                },
+                {
+                    data: 'transaction_date',
+                    name: 'transaction_date'
+                },
+                {
+                    data: 'ref_no',
+                    name: 'ref_no'
+                },
+                {
+                    data: 'location_name',
+                    name: 'BL.name'
+                },
+                {
+                    data: 'adjustment_type',
+                    name: 'adjustment_type'
+                },
+                {
+                    data: 'final_total',
+                    name: 'final_total'
+                },
+                {
+                    data: 'total_amount_recovered',
+                    name: 'total_amount_recovered'
+                },
+                {
+                    data: 'additional_notes',
+                    name: 'additional_notes'
+                },
+                {
+                    data: 'added_by',
+                    name: 'u.first_name'
+                },
+            ],
+            fnDrawCallback: function(oSettings) {
+                __currency_convert_recursively($('#inventory_table'));
+            },
+        });
+        var detailRows = [];
+
+        $(document).on('click', 'button.delete_inventory', function() {
+            swal({
+                title: LANG.sure,
+                icon: 'warning',
+                buttons: true,
+                dangerMode: true,
+            }).then(willDelete => {
+                if (willDelete) {
+                    var href = $(this).data('href');
+                    $.ajax({
+                        method: 'DELETE',
+                        url: href,
+                        dataType: 'json',
+                        success: function(result) {
+                            if (result.success) {
+                                toastr.success(result.msg);
+                                inventory_table.ajax.reload();
+                            } else {
+                                toastr.error(result.msg);
+                            }
+                        },
+                    });
+                }
+            });
+        });
+    });
+
+    function inventory_product_row(variation_id) {
+        var row_index = parseInt($('#product_row_index').val());
+        var location_id = $('select#location_id').val();
+        $.ajax({
+            method: 'POST',
+            url: '/products/get_product_row',
+            data: {
+                row_index: row_index,
+                variation_id: variation_id,
+                location_id: location_id
+            },
+            dataType: 'json',
+            success: function(result) {
+                var targetRow = $("#inventory_product_table").find("tr").filter(function() {
+                    return $(this).attr("row_id") === result.sku;
+                });
+                if (!targetRow.length) {
+                    let newProduct = $('table#inventory_product_table tbody').prepend(result.view).children().first();
+                    let argument = newProduct.find("input.input_quantity_argument").val();
+                    let autoHide = $("#auto_hide").val();
+                    if (autoHide && argument == 1) {
+                        newProduct.hide();
+                    }
+                    $('#product_row_index').val(row_index + 1);
+                    $('span#row_index').text(row_index + 1);
+                } else {
+                    let inputQuantity = targetRow.find("input.input_quantity");
+                    let productUnitPrice = targetRow.find("input.product_unit_price");
+                    let productLineTotal = targetRow.find("input.product_line_total");
+                    let quantity = parseInt(inputQuantity.val()) + 1;
+                    inputQuantity.val(quantity);
+                    productLineTotal.val(__number_f(parseInt(__read_number(productUnitPrice)) * quantity));
+                    targetRow.prependTo($('#inventory_product_table'));
+                    update_table_row(targetRow)
+                }
+                update_table_total();
+            },
+        });
+    }
+
+    function update_table_total() {
+        var table_total = 0;
+        var total_qty = 0;
+        var total_argument = 0;
+        $('table#inventory_product_table tbody tr').each(function() {
+            var this_total_argument = parseFloat(__read_number($(this).find('input.input_quantity_argument')));
+            var this_total = parseFloat(__read_number($(this).find('input.product_line_total')));
+            var this_total_qty = parseFloat(__read_number($(this).find('input.product_quantity')));
+            if (this_total) {
+                table_total += this_total;
+            }
+            if (this_total_qty) {
+                total_qty += this_total_qty;
+            }
+            if (this_total_argument) {
+                total_argument += this_total_argument;
+            }
+        });
+        $('input#total_amount').val(table_total);
+        $('span#total_inventory').text(__number_f(table_total));
+        $('span#total_qty').text(__number_f(total_qty));
+        $('span#total_argument').text(__number_f(total_argument));
+    }
+
+    function update_table_row(tr) {
+        var quantity = parseFloat(__read_number(tr.find('input.product_quantity')));
+        var unit_price = parseFloat(__read_number(tr.find('input.product_unit_price')));
+        var row_total = 0;
+        if (quantity && unit_price) {
+            row_total = quantity * unit_price;
+        }
+
+        //status
+        let inputQuantityStatus = tr.find("input.quantity_status");
+        let quantityArgument = tr.find("input.input_quantity_argument");
+        let autoHide = $("#auto_hide").val();
+        let statusQuantity = __read_number(quantityArgument) - quantity;
+        if (statusQuantity > 0) {
+            inputQuantityStatus.val("Thiếu");
+        } else if (statusQuantity == 0) {
+            if (autoHide) {
+                tr.hide();
+            }
+            inputQuantityStatus.val("Đủ");
+        } else {
+            tr.show();
+            inputQuantityStatus.val("Thừa");
+        }
+
+
+        tr.find('input.product_line_total').val(__number_f(row_total));
+        update_table_total();
+    }
+
+
+
+    $(document).on('shown.bs.modal', '.view_modal', function() {
+        __currency_convert_recursively($('.view_modal'));
+    });
+</script>
+<script type="text/javascript">
+    __page_leave_confirmation('#product_inventory');
 </script>
 @endsection
