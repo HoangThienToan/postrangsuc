@@ -88,7 +88,7 @@
 	<td>
 		<span class="row_subtotal_before_tax">{{@num_format($row_total)}}</span>
 	</td>
-	<td>
+	<!-- <td>
 		@if($loop->index == 0)
 			<button type="button" class="btn btn-primary btn-xs add_stock_row" data-sub-key="{{ count($purchases[$key][$variation->id])}}" 
 				data-row-html='<tr>
@@ -125,11 +125,12 @@
 		</span>
 	</td>
 	<td>&nbsp;</td></tr>'
-	><i class="fa fa-plus"></i></button>
+	>
+	<i class="fa fa-plus"></i></button>
 	@else
 		&nbsp;
 	@endif
-			</td>
+			</td> -->
 			</tr>
 		@endforeach
 	@endforeach

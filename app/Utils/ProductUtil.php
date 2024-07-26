@@ -337,7 +337,7 @@ class ProductUtil extends Util
      * @return boolean
      */
     public function updateProductQuantity($location_id, $product_id, $variation_id, $new_quantity, $old_quantity = 0, $number_format = null, $uf_data = true)
-    {
+    {   
         if ($uf_data) {
             $qty_difference = $this->num_uf($new_quantity, $number_format) - $this->num_uf($old_quantity, $number_format);
         } else {
@@ -449,7 +449,7 @@ class ProductUtil extends Util
      * @param int $location_id
      * @param bool $check_qty (If false qty_available is not checked)
      *
-     * @return array
+     * @return array/object
      */
     public function getDetailsFromVariation($variation_id, $business_id, $location_id = null, $check_qty = true)
     {

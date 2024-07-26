@@ -757,6 +757,7 @@ class BuySellPosController extends Controller
      */
     public function show($id)
     {
+
         $business_id = request()->session()->get('user.business_id');
         $taxes = TaxRate::where('business_id', $business_id)
             ->pluck('name', 'id');

@@ -141,6 +141,24 @@
 				</div>
 			</div>
 		</div>
+		<div class="col-sm-4">
+			<div class="form-group">
+				{!! Form::label('text_type', 'Font chữ:') !!}
+				<div class="input-group">
+					<span class="input-group-addon">
+						<i class="fa fa-cog"></i>
+					</span>
+					{!! Form::select('text_type', [
+					'Noto Sans' => 'Noto Sans',
+					'Work Sans' => 'Work Sans',
+					'Oswald' => 'Oswald',
+					'Inter' => 'Inter',
+					'Montserrat' => 'MonTserrat',
+					'Open Sans' => 'Open Sans',
+					], $text_type, ['class' => 'form-control']); !!}
+				</div>
+			</div>
+		</div>
 
 		<div class="clearfix"></div>
 

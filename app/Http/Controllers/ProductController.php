@@ -9,6 +9,7 @@ use App\Category;
 use App\Classifies;
 use App\Media;
 use App\Product;
+use App\Transaction;
 use App\ProductVariation;
 use App\PurchaseLine;
 use App\SellingPriceGroup;
@@ -16,6 +17,7 @@ use App\TaxRate;
 use App\Unit;
 use App\Utils\ModuleUtil;
 use App\Utils\ProductUtil;
+use App\Utils\TransactionUtil;
 use App\Variation;
 use App\VariationGroupPrice;
 use App\VariationLocationDetails;
@@ -34,6 +36,7 @@ class ProductController extends Controller
      */
     protected $productUtil;
     protected $moduleUtil;
+    protected $transactionUtil;
 
     private $barcode_types;
 
@@ -43,10 +46,11 @@ class ProductController extends Controller
      * @param ProductUtils $product
      * @return void
      */
-    public function __construct(ProductUtil $productUtil, ModuleUtil $moduleUtil)
+    public function __construct(ProductUtil $productUtil, ModuleUtil $moduleUtil, TransactionUtil $transactionUtil)
     {
         $this->productUtil = $productUtil;
         $this->moduleUtil = $moduleUtil;
+        $this->transactionUtil = $transactionUtil;
 
         //barcode types
         $this->barcode_types = $this->productUtil->barcode_types();
@@ -469,7 +473,14 @@ class ProductController extends Controller
             $classify = [];
 
             $classify['business_id'] = $business_id;
-            $classify['commodities'] = !empty($request->input('golden_age')) ? 'Vàng ' . number_format((float) $request->input('golden_age'), 2, ',', '') : '0.00';
+
+            $golden_age = $product_details['golden_age'];
+            if (strlen($golden_age) == 3) {
+                $golden_age = $golden_age / 10;
+            } elseif (strlen($golden_age) == 4) {
+                $golden_age = $golden_age / 100;
+            }
+            $classify['commodities'] = !empty($request->input('golden_age')) ? 'Vàng ' . $golden_age : '0.00';
             DB::beginTransaction();
 
             $product = Product::create($product_details);
@@ -483,8 +494,7 @@ class ProductController extends Controller
 
                 $commodities = Classifies::where('commodities', $classify['commodities'])
                     ->where('business_id', $business_id)->get();
-
-                if (!$commodities->isEmpty()) {
+                if ($commodities->isEmpty()) {
                     Classifies::create($classify);
                 }
             }
@@ -602,7 +612,7 @@ class ProductController extends Controller
         }
 
         $business_id = request()->session()->get('user.business_id');
-        
+
         // $categories = Category::forDropdown($business_id, 'product');
         if ($business_id != 13) {
             $categories1 = Category::forDropdown($business_id, 'product');
@@ -985,6 +995,120 @@ class ProductController extends Controller
 
             return $output;
         }
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  int  $id
+     * @return void
+     */
+    private function callDestroy($id)
+    {
+        if (!auth()->user()->can('product.delete')) {
+            abort(403, 'Unauthorized action.');
+        }
+
+            try {
+                $business_id = request()->session()->get('user.business_id');
+
+                $can_be_deleted = true;
+                $error_msg = '';
+
+                //Check if any purchase or transfer exists
+                $count = PurchaseLine::join(
+                    'transactions as T',
+                    'purchase_lines.transaction_id',
+                    '=',
+                    'T.id'
+                )
+                    ->whereIn('T.type', ['purchase'])
+                    ->where('T.business_id', $business_id)
+                    ->where('purchase_lines.product_id', $id)
+                    ->count();
+                if ($count > 0) {
+                    $can_be_deleted = false;
+                    $error_msg = __('lang_v1.purchase_already_exist');
+                } else {
+                    //Check if any opening stock sold
+                    $count = PurchaseLine::join(
+                        'transactions as T',
+                        'purchase_lines.transaction_id',
+                        '=',
+                        'T.id'
+                    )
+                        ->where('T.type', 'opening_stock')
+                        ->where('T.business_id', $business_id)
+                        ->where('purchase_lines.product_id', $id)
+                        ->where('purchase_lines.quantity_sold', '>', 0)
+                        ->count();
+                    if ($count > 0) {
+                        $can_be_deleted = false;
+                        $error_msg = __('lang_v1.opening_stock_sold');
+                    } else {
+                        //Check if any stock is adjusted
+                        $count = PurchaseLine::join(
+                            'transactions as T',
+                            'purchase_lines.transaction_id',
+                            '=',
+                            'T.id'
+                        )
+                            ->where('T.business_id', $business_id)
+                            ->where('purchase_lines.product_id', $id)
+                            ->where('purchase_lines.quantity_adjusted', '>', 0)
+                            ->count();
+                        if ($count > 0) {
+                            $can_be_deleted = false;
+                            $error_msg = __('lang_v1.stock_adjusted');
+                        }
+                    }
+                }
+
+                $product = Product::where('id', $id)
+                    ->where('business_id', $business_id)
+                    ->with('variations')
+                    ->first();
+
+                //Check if product is added as an ingredient of any recipe
+                if ($this->moduleUtil->isModuleInstalled('Manufacturing')) {
+                    $variation_ids = $product->variations->pluck('id');
+
+                    $exists_as_ingredient = \Modules\Manufacturing\Entities\MfgRecipeIngredient::whereIn('variation_id', $variation_ids)
+                        ->exists();
+                    if ($exists_as_ingredient) {
+                        $can_be_deleted = false;
+                        $error_msg = __('manufacturing::lang.added_as_ingredient');
+                    }
+                }
+
+                if ($can_be_deleted) {
+                    if (!empty($product)) {
+                        DB::beginTransaction();
+                        //Delete variation location details
+                        VariationLocationDetails::where('product_id', $id)
+                        ->delete();
+                        $product->delete();
+
+                        DB::commit();
+                    }
+
+                    $output = true;
+                } else {
+                    $output = false;
+                }
+            } catch (\Exception $e) {
+                DB::rollBack();
+                \Log::emergency("File:" . $e->getFile() . "Line:" . $e->getLine() . "Message:" . $e->getMessage());
+
+                // $output = [
+                //     'success' => false,
+                //     'msg' => __("messages.something_went_wrong")
+                // ];
+                $output = false;
+            }
+
+            return $output;
+        
     }
 
     /**
@@ -1455,6 +1579,33 @@ class ProductController extends Controller
         }
 
         return $output;
+    }
+
+    /**
+     * Return product rows
+     *
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\Response
+     */
+    public function getProductRow(Request $request)
+    {
+        if (request()->ajax()) {
+            $row_index = $request->input('row_index');
+            $variation_id = $request->input('variation_id');
+            $location_id = $request->input('location_id');
+
+            $business_id = $request->session()->get('user.business_id');
+            $product = $this->productUtil->getDetailsFromVariation($variation_id, $business_id, $location_id);
+            $product->formatted_qty_available = $this->productUtil->num_f($product->qty_available);
+
+            $lot_numbers = [];
+            $product->lot_numbers = $lot_numbers;
+
+
+            return
+                ["view" => view('product.partials.product_table_row')
+                    ->with(compact('product', 'row_index'))->render(), "sku" => $product->sub_sku];
+        }
     }
 
     /**
@@ -2201,6 +2352,263 @@ class ProductController extends Controller
         }
 
         return $output;
+    }
+
+    /**
+     * Gets the sub units for the given unit.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function saveInventory(Request $request)
+    {
+        if (!auth()->user()->can('product.opening_stock')) {
+            abort(403, 'Unauthorized action.');
+        }
+        try {
+            $opening_stocks = $request->input('products');
+            $delete_redundancy = $request->input('delete_redundancy');
+            $default_profit_percent = $request->session()->get('business.default_profit_percent');
+            $business_id = $request->session()->get('user.business_id');
+            $user_id = $request->session()->get('user.id');
+            $locations = BusinessLocation::forDropdown($business_id)->toArray();
+            //Get start date for financial year.
+            $transaction_date = request()->session()->get("financial_year.start");
+            $transaction_date = \Carbon::createFromFormat('Y-m-d', $transaction_date)->toDateTimeString();
+            foreach ($opening_stocks as $opening_stock) {
+
+                $product_id = $opening_stock['product_id'];
+                $product = Product::where('business_id', $business_id)
+                    ->where('id', $product_id)
+                    ->with(['variations', 'product_tax'])
+                    ->first();
+
+
+                if (!empty($product) && $product->enable_stock == 1) {
+                    //Get product tax
+                    $tax_percent = !empty($product->product_tax->amount) ? $product->product_tax->amount : 0;
+                    $tax_id = !empty($product->product_tax->id) ? $product->product_tax->id : null;
+
+
+
+                    DB::beginTransaction();
+                    //$key is the location_id
+                    $purchase_total = 0;
+                    //Check if valid location
+
+                    $purchase_lines = [];
+                    $updated_purchase_line_ids = [];
+                    $purchase_price = $this->productUtil->num_uf(trim($opening_stock['unit_price']));
+                    $item_tax = $this->productUtil->calc_percentage($purchase_price, $tax_percent);
+                    $purchase_price_inc_tax = $purchase_price + $item_tax;
+                    $qty_remaining = $this->productUtil->num_uf(trim($opening_stock['quantity']));
+
+                    $exp_date = null;
+                    if (!empty($v['exp_date'])) {
+                        $exp_date = $this->productUtil->uf_date($v['exp_date']);
+                    }
+
+                    $lot_number = null;
+                    if (!empty($v['lot_number'])) {
+                        $lot_number = $v['lot_number'];
+                    }
+
+                    $purchase_line = null;
+
+
+                    $purchase_line = PurchaseLine::where('product_id', $product_id)->first();
+                    $keys = array_keys($locations);
+                    $location_id = $keys[0];
+                    //Quantity = remaining + used
+                    $qty_remaining = $qty_remaining + $purchase_line->quantity_used;
+                    if ($qty_remaining != 0) {
+                        //Calculate transaction total
+                        $purchase_total += ($purchase_price_inc_tax * $qty_remaining);
+
+                        $updated_purchase_line_ids[] = $purchase_line->id;
+
+                        $old_qty = $purchase_line->quantity;
+
+                        $this->productUtil->updateProductQuantity($location_id, $product->id, $opening_stock['variation_id'], $qty_remaining, $old_qty, null, false);
+                        
+                        $data = [
+                            'default_purchase_price' => $this->num_uf($purchase_price),
+                            'dpp_inc_tax' => $this->num_uf($purchase_price_inc_tax),
+                            'profit_percent' => $this->num_uf($default_profit_percent),
+                            'default_sell_price' => $this->num_uf($purchase_price + $purchase_price*$default_profit_percent),
+                            'sell_price_inc_tax' => $this->num_uf($purchase_price + $purchase_price * $default_profit_percent + $item_tax)
+                        ];
+                        if (!empty($v['sub_sku'])) {
+                            $data['sub_sku'] = $v['sub_sku'];
+                        }
+                        $variation = Variation::where('id', $opening_stock['variation_id'])
+                            ->first();
+
+                        $variation->update($data);
+                    }
+
+                    if (!is_null($purchase_line)) {
+                        $purchase_line->item_tax = $item_tax;
+                        $purchase_line->tax_id = $tax_id;
+                        $purchase_line->quantity = $qty_remaining;
+                        $purchase_line->pp_without_discount = $purchase_price;
+                        $purchase_line->purchase_price = $purchase_price;
+                        $purchase_line->purchase_price_inc_tax = $purchase_price_inc_tax;
+                        $purchase_line->exp_date = $exp_date;
+                        $purchase_line->lot_number = $lot_number;
+
+                        $purchase_lines[] = $purchase_line;
+                    }
+
+                    //create transaction & purchase lines
+                    if (!empty($purchase_lines)) {
+                        $is_new_transaction = false;
+
+                        $transaction = Transaction::where('type', 'opening_stock')
+                            ->where('business_id', $business_id)
+                            ->where('opening_stock_product_id', $product->id)
+                            ->where('location_id', $location_id)
+                            ->first();
+                        if (!empty($transaction)) {
+                            $transaction->total_before_tax = $purchase_total;
+                            $transaction->final_total = $purchase_total;
+                            $transaction->update();
+                        } else {
+                            $is_new_transaction = true;
+
+                            $transaction = Transaction::create(
+                                [
+                                    'type' => 'opening_stock',
+                                    'opening_stock_product_id' => $product->id,
+                                    'status' => 'received',
+                                    'business_id' => $business_id,
+                                    'transaction_date' => $transaction_date,
+                                    'total_before_tax' => $purchase_total,
+                                    'location_id' => $location_id,
+                                    'final_total' => $purchase_total,
+                                    'payment_status' => 'paid',
+                                    'created_by' => $user_id
+                                ]
+                            );
+                        }
+
+                        //unset deleted purchase lines
+                        $delete_purchase_line_ids = [];
+                        $delete_purchase_lines = null;
+                        $delete_purchase_lines = PurchaseLine::where('transaction_id', $transaction->id)
+                            ->whereNotIn('id', $updated_purchase_line_ids)
+                            ->get();
+
+                        if ($delete_purchase_lines->count()) {
+                            foreach ($delete_purchase_lines as $delete_purchase_line) {
+                                $delete_purchase_line_ids[] = $delete_purchase_line->id;
+
+                                //decrease deleted only if previous status was received
+                                $this->productUtil->decreaseProductQuantity(
+                                    $delete_purchase_line->product_id,
+                                    $delete_purchase_line->variation_id,
+                                    $transaction->location_id,
+                                    $delete_purchase_line->quantity
+                                );
+                            }
+                            //Delete deleted purchase lines
+                            PurchaseLine::where('transaction_id', $transaction->id)
+                                ->whereIn('id', $delete_purchase_line_ids)
+                                ->delete();
+                        }
+                        $transaction->purchase_lines()->saveMany($purchase_lines);
+
+                        //Update mapping of purchase & Sell.
+                        if (!$is_new_transaction) {
+                            $this->transactionUtil->adjustMappingPurchaseSellAfterEditingPurchase('received', $transaction, $delete_purchase_lines);
+                        }
+
+                        //Adjust stock over selling if found
+                        $this->productUtil->adjustStockOverSelling($transaction);
+                    } else {
+                        //Delete transaction if all purchase line quantity is 0 (Only if transaction exists)
+                        $delete_transaction = Transaction::where('type', 'opening_stock')
+                            ->where('business_id', $business_id)
+                            ->where('opening_stock_product_id', $product->id)
+                            ->where('location_id', $location_id)
+                            ->with(['purchase_lines'])
+                            ->first();
+
+                        if (!empty($delete_transaction)) {
+                            $delete_purchase_lines = $delete_transaction->purchase_lines;
+
+                            foreach ($delete_purchase_lines as $delete_purchase_line) {
+                                $this->productUtil->decreaseProductQuantity($product->id, $delete_purchase_line->variation_id, $location_id, $delete_purchase_line->quantity);
+                                $delete_purchase_line->delete();
+                            }
+
+                            //Update mapping of purchase & Sell.
+                            $this->transactionUtil->adjustMappingPurchaseSellAfterEditingPurchase('received', $delete_transaction, $delete_purchase_lines);
+
+                            $delete_transaction->delete();
+                        }
+                    }
+
+
+
+                    DB::commit();
+                }
+            }
+            if($delete_redundancy) {
+                $productIds = Product::pluck('id')->toArray();
+                $openingStockIds = array_column($opening_stocks, 'product_id');
+                $remainingProductIds = array_diff($productIds, $openingStockIds);
+                foreach ($remainingProductIds as $productId) {
+                    $this->callDestroy($productId);
+                }
+            }
+            
+
+
+            $output = [
+                'success' => 1,
+                'msg' => 'Các thay đổi đã được áp dụng'
+            ];
+        } catch (\Exception $e) {
+            DB::rollBack();
+            \Log::emergency("File:" . $e->getFile() . "Line:" . $e->getLine() . "Message:" . $e->getMessage());
+
+            $output = [
+                'success' => 0,
+                'msg' => $e->getMessage()
+            ];
+            return back()->with('status', $output);
+        }
+
+        if (request()->ajax()) {
+            return $output;
+        }
+
+        return redirect('products')->with('status', $output);
+    }
+
+    /**
+     * This function unformats a number and returns them in plain eng format
+     *
+     * @param int $input_number
+     *
+     * @return float
+     */
+    public function num_uf($input_number, $currency_details = null)
+    {
+        $thousand_separator  = '';
+        $decimal_separator  = '';
+        if (!empty($currency_details)) {
+            $thousand_separator = $currency_details->thousand_separator;
+            $decimal_separator = $currency_details->decimal_separator;
+        } else {
+            $thousand_separator = session()->has('currency') ? session('currency')['thousand_separator'] : '';
+            $decimal_separator = session()->has('currency') ? session('currency')['decimal_separator'] : '';
+        }
+        $num = str_replace($thousand_separator, '', $input_number);
+        $num = str_replace($decimal_separator, '.', $num);
+
+        return (float)$num;
     }
 
     public function productStockHistory($id)

@@ -1,0 +1,1 @@
+[2021-08-03 11:33:17] live.EMERGENCY: File:/home/postrangsuc/public_html/vendor/mpdf/mpdf/src/Mpdf.phpLine:9600Message:fopen(/home/postrangsuc/public_html/storage/app/pdf/1627965197_ledger.pdf): failed to open stream: No such file or directory  
