@@ -359,7 +359,7 @@ $common_settings = session()->get('business.common_settings');
 <script>
 	$(document).ready(function() {
 		$('.price').on('input', function() {
-			var price = $('.price').val().replace(/[^0-9]/g, ''); // Loại bỏ tất cả các ký tự không phải số
+			var price = $(this).val().replace(/[^0-9]/g, ''); // Loại bỏ tất cả các ký tự không phải số
 			var thousand = (price / 1000).toFixed(0);
 			var million = (price / 1000000).toFixed(4).replace(/\.?0+$/, "");
 			var div = $(this).parent();
